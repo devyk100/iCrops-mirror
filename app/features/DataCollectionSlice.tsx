@@ -1,11 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
+
 
 export const counterSlice = createSlice({
   name: 'dataform',
   initialState: {
     latitude: null,
     longitude: null,
-    images: [],
+    images: ["null"], //null for typescript to infer a string type
     distanceToCenter: null,
     landCoverType: null,
     waterSource: null,
@@ -35,13 +36,18 @@ export const counterSlice = createSlice({
     setCropIntensity: (state, action) => {state.cropIntensity = action.payload},
     setPrimaryCrop: (state, action) => {state.primaryCrop = action.payload},
     setSecondaryCrop: (state, action) => {state.secondaryCrop = action.payload},
-    setLiveStock: (state, action) => {state.liveStock = action.payload}
+    setLiveStock: (state, action) => {state.liveStock = action.payload},
+    //images section
+    addImage: (state, action) => {
+        state.images.push(action.payload);
+    }
   }
 })
 
-export const { setLandCoverType, setLatitute, setLongitude, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock } = counterSlice.actions
+export const { setLandCoverType, setLatitute, setLongitude, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage } = counterSlice.actions
 
 export default counterSlice.reducer
 
 export const selectLandCoverType = (state:any) => state.dataform.landCoverType;
 export const selectWaterSourceType = (state:any) => state.dataform.waterSource;
+export const selectImagesList = (state:any) => state.dataform.images;

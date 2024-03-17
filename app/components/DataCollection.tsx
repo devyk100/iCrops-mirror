@@ -17,6 +17,7 @@ import { selectLandCoverType, setLandCoverType } from '../features/DataCollectio
 import { useDispatch, useSelector } from 'react-redux';
 import CropInformation from './CropInformation';
 import { landData } from '../data';
+import FormCameraHandle from './FormCameraHandle';
 
 
 
@@ -30,13 +31,7 @@ export default function ({navigation}: {navigation: any}) {
   return (
     <>
       <ScrollView>
-        <View
-          style={{
-            marginTop: 10,
-          }}>
-          <Button>TAKE PICTURE</Button>
-        </View>
-
+       <FormCameraHandle />
         {/* The Location Section */}
         <View
           style={{

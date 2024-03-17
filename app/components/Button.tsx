@@ -4,7 +4,7 @@ import { TouchableOpacity, Text } from "react-native";
 
 export default function({children, handler}: {
     children: ReactNode,
-    handler?: () => null
+    handler?: () => void
 }){
     return (
         <>
