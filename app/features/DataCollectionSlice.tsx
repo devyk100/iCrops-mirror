@@ -40,11 +40,17 @@ export const counterSlice = createSlice({
     //images section
     addImage: (state, action) => {
         state.images.push(action.payload);
+    },
+    removeImage: (state, action) => {
+        state.images = state.images.filter((value) => {
+            if(value == action.payload) return;
+            return true
+        })
     }
   }
 })
 
-export const { setLandCoverType, setLatitute, setLongitude, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage } = counterSlice.actions
+export const { setLandCoverType, setLatitute, setLongitude, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage, removeImage } = counterSlice.actions
 
 export default counterSlice.reducer
 

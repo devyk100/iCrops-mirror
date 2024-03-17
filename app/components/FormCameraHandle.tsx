@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Alert,
 } from 'react-native';
 import {
   Camera,
@@ -14,8 +15,8 @@ import {
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
-import {addImage, selectImagesList} from '../features/DataCollectionSlice';
-import { ScrollView } from 'react-native-gesture-handler';
+import {addImage, removeImage, selectImagesList} from '../features/DataCollectionSlice';
+import {ScrollView} from 'react-native-gesture-handler';
 
 export default function () {
   const imageList = useSelector(selectImagesList);
@@ -53,14 +54,40 @@ export default function () {
           {imageList.map((value: string) => {
             if (value == 'null') return null;
             return (
-              <Image
-                source={{uri: value}}
-                style={{
-                  width: 150, // Adjust width as needed
-                  height: 150, // Adjust height as needed
-                  resizeMode: 'contain', // You can adjust resizeMode as per your requirement
-                  marginRight:5
-                }}></Image>
+              <View>
+                <Image
+                  source={{uri: value}}
+                  style={{
+                    width: 150, // Adjust width as needed
+                    height: 150, // Adjust height as needed
+                    resizeMode: 'contain', // You can adjust resizeMode as per your requirement
+                    marginRight: 5,
+                  }}></Image>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    backgroundColor: 'white',
+                    width: 20,
+                    padding: 4,
+                    borderRadius: 10,
+                  }}
+                  onPress={() => {
+                    Alert.alert('Are you sure you want to delete this image?', "Once deleted you can't recover it.", [
+                        {
+                          text: 'Cancel',
+                          onPress: () => {console.log("delete operation canceled.")}
+                        //   style: 'cancel',
+                        },
+                        {text: 'OK', onPress: () => dispatch(removeImage(value))},
+                      ]);
+                  }}
+                  >
+                  <Text
+                    style={{color: 'red', width: '100%', textAlign: 'center'}}>
+                    X
+                  </Text>
+                </TouchableOpacity>
+              </View>
             );
           })}
         </ScrollView>
