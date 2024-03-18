@@ -7,6 +7,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import MapView, {
   Callout,
@@ -34,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapChooser = ({handler} : {handler:() => void}) => {
+const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) => void}) => {
   const [region, setRegion] = useState<Region>({
     longitude: 0,
     latitude: 0,
@@ -109,39 +110,67 @@ const MapChooser = ({handler} : {handler:() => void}) => {
         </Marker>
       </MapView>
       <View
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: 'auto',
-          backgroundColor: 'turquoise',
-          padding: 10,
-          borderRadius: 20,
-        }}>
-        <Text style={{color: 'black', margin: 10, fontSize: 14, textAlign:"center"}}>
-          Tap at any location, or hold and drag the marker above to mark and get the
-          coordinates of the position
-        </Text>
-        <Text style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
-          Latitude: {mapCoordinates.latitude}
-        </Text>
-        <Text style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
-          Longitude: {mapCoordinates.longitude}
-        </Text>
+      style={{
+        position: 'absolute',
+        width: '100%',
+        height: 'auto'
+      }}
+      >
+        <View style={{flexDirection: 'row', margin:10, justifyContent:"flex-end"}}>
+          <TouchableOpacity
+          onPress={() => {
+            handler(mapCoordinates.latitude, mapCoordinates.longitude)
+          }}
+            style={{backgroundColor: 'green', padding: 10, paddingHorizontal:15, borderRadius: 15}}>
+            <Text
+            // @ts-ignore
+              style={{
+                fontSize: 18,
+                fontWeight: 900,
+              }}>
+              Done
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            backgroundColor: 'turquoise',
+            padding: 10,
+            borderRadius: 20,
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              margin: 10,
+              fontSize: 14,
+              textAlign: 'center',
+            }}>
+            Tap at any location, or hold and drag the marker above to mark and
+            get the coordinates of the position
+          </Text>
+          <Text
+            style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
+            Latitude: {mapCoordinates.latitude}
+          </Text>
+          <Text
+            style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
+            Longitude: {mapCoordinates.longitude}
+          </Text>
+        </View>
       </View>
     </View>
   );
 };
 
-export default function ({handler} : {handler:() => void}) {
+export default function ({handler}: {handler: (latitude: number, longitude: number) => void}) {
   const [isRendered, setIsRendered] = useState(false);
-  const [modalOpened, setModalOpened] = useState(false);
   useEffect(() => {
     setIsRendered(true);
   }, []);
   if (isRendered)
     return (
       <>
-          <MapChooser handler={handler} />
+        <MapChooser handler={handler} />
       </>
     );
   return null;
