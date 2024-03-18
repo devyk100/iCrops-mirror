@@ -1,8 +1,16 @@
 import Geolocation from '@react-native-community/geolocation';
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {Alert, StyleSheet, Text, View} from 'react-native';
+import {
+  Alert,
+  Modal,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import MapView, {
   Callout,
+  LatLng,
   MapPressEvent,
   Marker,
   MarkerDragStartEndEvent,
@@ -10,6 +18,7 @@ import MapView, {
   Region,
 } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import {Position, PositionError} from '../types';
+// import {  } from 'react-native-gesture-handler';
 // import {  } from 'react-native-reanimated/lib/typescript/Animated';
 
 const styles = StyleSheet.create({
@@ -25,17 +34,18 @@ const styles = StyleSheet.create({
   },
 });
 
-export default () => {
+const MapChooser = ({handler} : {handler:() => void}) => {
   const [region, setRegion] = useState<Region>({
     longitude: 0,
     latitude: 0,
     latitudeDelta: 0.0015,
     longitudeDelta: 0.0015,
   });
-  const ref = useRef<MapView>()
-  const mapPointHandler = useCallback(() => {
-
-  }, [])
+  const [mapCoordinates, setMapCoordinates] = useState<LatLng>({
+    latitude: region.latitude,
+    longitude: region.longitude,
+  });
+  const ref = useRef<MapView>();
 
   return (
     <View style={styles.container}>
@@ -48,15 +58,13 @@ export default () => {
         loadingIndicatorColor={'grey'}
         showsUserLocation={true}
         showsMyLocationButton={true}
-        // onPress={(event: MapPressEvent) => {
-        //   const coordinates = event.nativeEvent.coordinate;
-        //   setRegion({
-        //     latitude: coordinates.latitude,
-        //     longitude: coordinates.longitude,
-        //     latitudeDelta: 0.0015,
-        //     longitudeDelta: 0.0015
-        //   })
-        // }}
+        onPress={(event: MapPressEvent) => {
+          const coordinates = event.nativeEvent.coordinate;
+          setMapCoordinates({
+            latitude: coordinates.latitude,
+            longitude: coordinates.longitude,
+          });
+        }}
         onMapReady={() => {
           Geolocation.setRNConfiguration({
             skipPermissionRequests: false,
@@ -73,25 +81,68 @@ export default () => {
                 latitudeDelta: 0.0015,
                 longitudeDelta: 0.0015,
               });
+              setMapCoordinates({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              });
             },
             (error: PositionError) => console.log(error),
             {},
           );
         }}>
         <Marker
-          coordinate={region}
+          coordinate={mapCoordinates}
           draggable
           tappable
           onDragEnd={(event: MarkerDragStartEndEvent) => {
-            console.log(event.nativeEvent);
-          }}
-        >
-           <Callout tooltip={false} style={{borderRadius:10}}>
-            <Text style={{color:"blue"}}>Place this to the position you want to mark.</Text>
-
-           </Callout>
+            const coordinates = event.nativeEvent.coordinate;
+            setMapCoordinates({
+              latitude: coordinates.latitude,
+              longitude: coordinates.longitude,
+            });
+          }}>
+          <Callout tooltip={false} style={{borderRadius: 10}}>
+            <Text style={{color: 'blue'}}>
+              Place this to the position you want to mark.
+            </Text>
+          </Callout>
         </Marker>
       </MapView>
+      <View
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: 'auto',
+          backgroundColor: 'turquoise',
+          padding: 10,
+          borderRadius: 20,
+        }}>
+        <Text style={{color: 'black', margin: 10, fontSize: 14, textAlign:"center"}}>
+          Tap at any location, or hold and drag the marker above to mark and get the
+          coordinates of the position
+        </Text>
+        <Text style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
+          Latitude: {mapCoordinates.latitude}
+        </Text>
+        <Text style={{color: 'red', textAlign: 'center', marginHorizontal: 10}}>
+          Longitude: {mapCoordinates.longitude}
+        </Text>
+      </View>
     </View>
   );
 };
+
+export default function ({handler} : {handler:() => void}) {
+  const [isRendered, setIsRendered] = useState(false);
+  const [modalOpened, setModalOpened] = useState(false);
+  useEffect(() => {
+    setIsRendered(true);
+  }, []);
+  if (isRendered)
+    return (
+      <>
+          <MapChooser handler={handler} />
+      </>
+    );
+  return null;
+}
