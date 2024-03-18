@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {Alert, Button, Text} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {selectLocation, setLatitude, setLocation} from '../features/LocationSlice';
-import {setLongitude} from '../features/DataCollectionSlice';
+// import {setLongitude} from '../features/DataCollectionSlice';
 
 // Geolocation.getCurrentPosition(info => console.log(info));
 
