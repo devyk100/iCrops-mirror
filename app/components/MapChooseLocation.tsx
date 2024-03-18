@@ -19,6 +19,10 @@ import MapView, {
   Region,
 } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import {Position, PositionError} from '../types';
+import { useNetInfo } from "@react-native-community/netinfo";
+
+
+
 // import {  } from 'react-native-gesture-handler';
 // import {  } from 'react-native-reanimated/lib/typescript/Animated';
 
@@ -51,7 +55,7 @@ const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) =
   return (
     <View style={styles.container}>
       <MapView
-        mapType="standard"
+        mapType="satellite"
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={region}
@@ -161,12 +165,22 @@ const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) =
     </View>
   );
 };
-
-export default function ({handler}: {handler: (latitude: number, longitude: number) => void}) {
+// handler is for successful operations and closer for cleaning up things that shouldn't have been happening
+export default function ({handler, closer}: {handler: (latitude: number, longitude: number) => void,  closer: () => void}) {
   const [isRendered, setIsRendered] = useState(false);
+  const { type, isConnected } = useNetInfo();
   useEffect(() => {
-    setIsRendered(true);
-  }, []);
+    if(type != "none" && isConnected == true){
+      setIsRendered(true);
+    }
+    if(type == "none" || isConnected == false){
+      Alert.alert("You're not connected to the Internet.", "Connect to the internet to use the maps functionality")
+      if(isRendered == false){
+        closer()
+      }
+    }
+    console.log(type, isConnected);
+  }, [type, isConnected]);
   if (isRendered)
     return (
       <>

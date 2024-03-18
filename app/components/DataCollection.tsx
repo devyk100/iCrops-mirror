@@ -13,35 +13,41 @@ import {useState} from 'react';
 import {} from 'react-native-gesture-handler';
 import {Slider} from '@miblanchard/react-native-slider';
 import CustomModal from './CustomModal';
-import {selectLandCoverType, setLandCoverType } from '../features/DataCollectionSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectLandCoverType,
+  setLandCoverType,
+} from '../features/DataCollectionSlice';
+import {useDispatch, useSelector} from 'react-redux';
 import CropInformation from './CropInformation';
-import { landData } from '../data';
+import {landData} from '../data';
 import FormCameraHandle from './FormCameraHandle';
-import getLocation, { getImageLocation } from '../location/getLocation';
-import { clearLocation, selectLocation } from '../features/LocationSlice';
-
-
-
+import getLocation, {getImageLocation} from '../location/getLocation';
+import {
+  clearLocation,
+  selectLocation,
+  setLocation,
+} from '../features/LocationSlice';
+import MapChooseLocation from './MapChooseLocation';
 
 export default function ({navigation}: {navigation: any}) {
   const [isEnabled, setIsEnabled] = useState(false);
   const locationData = useSelector(selectLocation);
   const toggleSwitch = () => {
     setIsEnabled(previousState => {
-        if(!previousState == true){
-            getLocation();
-        }
-        return !previousState
-    })
+      if (!previousState == true) {
+        getLocation();
+      }
+      return !previousState;
+    });
   };
   const [distanceToCenter, setDistanceToCenter] = useState(70);
   const dispatch = useDispatch();
   const landCoverType = useSelector(selectLandCoverType);
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   return (
     <>
       <ScrollView>
-       <FormCameraHandle />
+        <FormCameraHandle />
         {/* The Location Section */}
         <View
           style={{
@@ -83,6 +89,73 @@ export default function ({navigation}: {navigation: any}) {
           <View
             style={{
               flexDirection: 'row',
+              marginHorizontal: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: 'black',
+                flex: 5,
+                margin: 5,
+              }}>
+              Use maps to capture the location
+            </Text>
+            <Modal
+              style={{
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'white',
+              }}
+              onRequestClose={() => {
+                setIsMapModalOpen(false);
+              }}
+              visible={isMapModalOpen}
+              >
+              <MapChooseLocation
+                closer={() => {
+                  setIsMapModalOpen(false);
+                  if(!locationData.latitude) setIsEnabled(false); // in case the user opens the map after turning it on once, meaning the data is present from the past stuff.
+                }}
+                handler={(latitude, longitude) => {
+                  dispatch(
+                    setLocation({
+                      latitude: latitude,
+                      longitude: longitude,
+                      accuracy: 10,
+                    }),
+                  );
+                  setIsMapModalOpen(false);
+                  setIsEnabled(true);
+                }}
+              />
+            </Modal>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#d4d4d4',
+                padding: 10,
+                marginTop: 0,
+              }}
+              // onPress={() => {
+              //   dispatch(clearLocation())
+              //   setIsEnabled(false);
+              // }}
+              onPress={() => {
+                setIsMapModalOpen(true);
+              }}>
+              <Text
+                style={{
+                  color: 'black',
+                  textAlign: 'center',
+                }}>
+                Open Maps
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
               //   width:"100%",
@@ -104,10 +177,9 @@ export default function ({navigation}: {navigation: any}) {
                 marginTop: 0,
               }}
               onPress={() => {
-                dispatch(clearLocation())
+                dispatch(clearLocation());
                 setIsEnabled(false);
-              }}
-              >
+              }}>
               <Text
                 style={{
                   color: 'black',
@@ -120,7 +192,7 @@ export default function ({navigation}: {navigation: any}) {
 
           <View
             style={{
-              flexDirection: 'row',
+              flexDirection: 'column',
               marginHorizontal: 20,
             }}>
             <Text
@@ -129,7 +201,15 @@ export default function ({navigation}: {navigation: any}) {
                 flex: 5,
                 margin: 5,
               }}>
-              Lat: {locationData.latitude} Lon: {locationData.longitude}
+              Lat: {locationData.latitude}
+            </Text>
+            <Text
+              style={{
+                color: 'black',
+                flex: 5,
+                margin: 5,
+              }}>
+              Lon: {locationData.longitude}
             </Text>
           </View>
 
@@ -244,17 +324,15 @@ export default function ({navigation}: {navigation: any}) {
                 }}>
                 Land Cover Type:
               </Text>
-             <CustomModal data={landData} action={(payload) => dispatch(setLandCoverType(payload))}></CustomModal>
-             
+              <CustomModal
+                data={landData}
+                action={payload =>
+                  dispatch(setLandCoverType(payload))
+                }></CustomModal>
             </View>
-
-            
           </View>
 
-        {
-            landCoverType == "Cropland"? <CropInformation />: null
-        }
-
+          {landCoverType == 'Cropland' ? <CropInformation /> : null}
 
           <View
             style={{
@@ -271,7 +349,7 @@ export default function ({navigation}: {navigation: any}) {
               }}>
               Quality Control
             </Text>
-            </View>
+          </View>
         </View>
       </ScrollView>
     </>
