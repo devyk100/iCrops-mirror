@@ -4,8 +4,8 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 export const counterSlice = createSlice({
   name: 'dataform',
   initialState: {
-    latitude: null,
-    longitude: null,
+    // latitude: null,
+    // longitude: null,
     images: ["null"], //null for typescript to infer a string type
     distanceToCenter: null,
     landCoverType: null,
@@ -16,16 +16,16 @@ export const counterSlice = createSlice({
     liveStock: null
   },
   reducers: {
-    setLatitute: (state, action) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
-      state.latitude = action.payload;
-    },
-    setLongitude: (state, action) => {
-      state.longitude = action.payload;
-    },
+    // setLatitute: (state, action) => {
+    //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
+    //   // doesn't actually mutate the state because it uses the immer library,
+    //   // which detects changes to a "draft state" and produces a brand new
+    //   // immutable state based off those changes
+    //   state.latitude = action.payload;
+    // },
+    // setLongitude: (state, action) => {
+    //   state.longitude = action.payload;
+    // },
     incrementByAmount: (state, action) => {
     //   state. += action.payload
     },
@@ -50,7 +50,7 @@ export const counterSlice = createSlice({
   }
 })
 
-export const { setLandCoverType, setLatitute, setLongitude, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage, removeImage } = counterSlice.actions
+export const { setLandCoverType, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage, removeImage } = counterSlice.actions
 
 export default counterSlice.reducer
 

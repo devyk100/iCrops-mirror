@@ -13,18 +13,28 @@ import {useState} from 'react';
 import {} from 'react-native-gesture-handler';
 import {Slider} from '@miblanchard/react-native-slider';
 import CustomModal from './CustomModal';
-import { selectLandCoverType, setLandCoverType } from '../features/DataCollectionSlice';
+import {selectLandCoverType, setLandCoverType } from '../features/DataCollectionSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import CropInformation from './CropInformation';
 import { landData } from '../data';
 import FormCameraHandle from './FormCameraHandle';
+import getLocation, { getImageLocation } from '../location/getLocation';
+import { clearLocation, selectLocation } from '../features/LocationSlice';
 
 
 
 
 export default function ({navigation}: {navigation: any}) {
   const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+  const locationData = useSelector(selectLocation);
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => {
+        if(!previousState == true){
+            getLocation();
+        }
+        return !previousState
+    })
+  };
   const [distanceToCenter, setDistanceToCenter] = useState(70);
   const dispatch = useDispatch();
   const landCoverType = useSelector(selectLandCoverType);
@@ -85,14 +95,19 @@ export default function ({navigation}: {navigation: any}) {
                 flex: 6,
                 // padding:5
               }}>
-              Accuracy Correction:
+              Accuracy Correction: {locationData.accuracy}
             </Text>
             <TouchableOpacity
               style={{
                 backgroundColor: '#d4d4d4',
                 padding: 10,
                 marginTop: 0,
-              }}>
+              }}
+              onPress={() => {
+                dispatch(clearLocation())
+                setIsEnabled(false);
+              }}
+              >
               <Text
                 style={{
                   color: 'black',
@@ -114,7 +129,7 @@ export default function ({navigation}: {navigation: any}) {
                 flex: 5,
                 margin: 5,
               }}>
-              Lat: Lon:
+              Lat: {locationData.latitude} Lon: {locationData.longitude}
             </Text>
           </View>
 

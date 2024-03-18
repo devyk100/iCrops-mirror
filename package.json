@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@miblanchard/react-native-slider": "^2.3.1",
+    "@react-native-community/geolocation": "^3.2.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/drawer": "^6.6.14",
     "@react-navigation/native": "^6.1.16",
