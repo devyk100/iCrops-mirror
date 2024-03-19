@@ -25,7 +25,7 @@ export default function () {
       {mediaType: 'photo'},
       (res: any) => {
         try {
-          dispatch(addImage(res.assets[0].uri));
+          // dispatch(addImage(res.assets[0].uri));
           setCurrentImageUri(res.assets[0].uri)
           setIsImageTaggerModalOpen(true);
         } catch (e) {
@@ -38,7 +38,7 @@ export default function () {
   const openCamera = useCallback(async () => {
     const result = await launchCamera({mediaType: 'photo'}, (res: any) => {
       try {
-        dispatch(addImage(res.assets[0].uri));
+        // dispatch(addImage(res.assets[0].uri));
         setCurrentImageUri(res.assets[0].uri)
         setIsImageTaggerModalOpen(true);
       } catch (e) {
