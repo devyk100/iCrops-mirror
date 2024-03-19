@@ -44,7 +44,7 @@ function CustomDrawerContent(props: any) {
 export default function App() {
   return (
     <Provider store={store}>
-      {/* <NavigationContainer>
+      <NavigationContainer>
         <Drawer.Navigator
           initialRouteName="ICRISAT iCrops"
           screenOptions={{
@@ -68,8 +68,8 @@ export default function App() {
             component={DataCollection}
           />
         </Drawer.Navigator>
-      </NavigationContainer> */}
-      <ImageMarker></ImageMarker>
+      </NavigationContainer>
+      {/* <ImageMarker></ImageMarker> */}
       {/* <MapChooseLocation></MapChooseLocation> */}
       </Provider>
   );

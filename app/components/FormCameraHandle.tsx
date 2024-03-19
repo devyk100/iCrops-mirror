@@ -12,10 +12,13 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {addImage, removeImage, selectImagesList} from '../features/DataCollectionSlice';
 import {ScrollView} from 'react-native-gesture-handler';
+import ImageMarker from './ImageMarker';
 
 export default function () {
   const imageList = useSelector(selectImagesList);
   const dispatch = useDispatch();
+  const [isImageTaggerModalOpen, setIsImageTaggerModalOpen] = useState(false);
+  const [currentImageUri, setCurrentImageUri] = useState<string>("");
   // const [imageUri, setImageUri] = useState("file:///data/user/0/com.icrops/cache/rn_image_picker_lib_temp_803e2e1a-f692-42ab-800b-9c828e869acb.jpg");
   const openGallery = useCallback(async () => {
     const result = await launchImageLibrary(
@@ -23,6 +26,8 @@ export default function () {
       (res: any) => {
         try {
           dispatch(addImage(res.assets[0].uri));
+          setCurrentImageUri(res.assets[0].uri)
+          setIsImageTaggerModalOpen(true);
         } catch (e) {
           console.log('Image saving rejected');
         }
@@ -34,6 +39,8 @@ export default function () {
     const result = await launchCamera({mediaType: 'photo'}, (res: any) => {
       try {
         dispatch(addImage(res.assets[0].uri));
+        setCurrentImageUri(res.assets[0].uri)
+        setIsImageTaggerModalOpen(true);
       } catch (e) {
         console.log('Image saving rejected');
       }
@@ -120,6 +127,7 @@ export default function () {
             }}>
             <Text>Gallery</Text>
           </TouchableOpacity>
+          <ImageMarker toRender={isImageTaggerModalOpen} closer={() => setIsImageTaggerModalOpen(false)} imageUri={currentImageUri}/>
         </View>
       </View>
     </>
