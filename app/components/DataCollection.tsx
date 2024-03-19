@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Button from './Button';
-import {useState} from 'react';
+import {useCallback, useState} from 'react';
 import {} from 'react-native-gesture-handler';
 import {Slider} from '@miblanchard/react-native-slider';
 import CustomModal from './CustomModal';
@@ -28,18 +28,47 @@ import {
   setLocation,
 } from '../features/LocationSlice';
 import MapChooseLocation from './MapChooseLocation';
+import Geolocation from '@react-native-community/geolocation';
+import CCE from './CCE';
 
 export default function ({navigation}: {navigation: any}) {
   const [isEnabled, setIsEnabled] = useState(false);
   const locationData = useSelector(selectLocation);
+  const [isCaptureCCE, setIsCaptureCCE] = useState(false);
   const toggleSwitch = () => {
-    setIsEnabled(previousState => {
-      if (!previousState == true) {
-        getLocation();
-      }
-      return !previousState;
-    });
+    setIsEnabled(t => !t)
+    // setIsEnabled(previousState => {
+    //   if (!previousState == true) {
+    //     getLocation();
+    //   }
+    //   return !previousState;
+    // });
   };
+
+  const getCurrentPosition = useCallback(() => {
+    Geolocation.getCurrentPosition(
+      (pos: any) => {
+        // setPosition(JSON.stringify(pos));
+        dispatch(setLocation(pos.coords))
+        // dispatch(setLatitude(pos.coords.latitude));
+        // dispatch(setLongitude(pos.coords.longitude));
+        // console.log(locationData);
+        console.log(pos)
+      },
+      (error: any) =>
+        Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
+      {enableHighAccuracy: true},
+    )
+  }, [])
+  const locationSetter = () => {
+    if(isEnabled == false){
+      // getLocation();
+      getCurrentPosition();
+    }
+    else{
+      setIsMapModalOpen(true);
+    }
+  }
   const [distanceToCenter, setDistanceToCenter] = useState(70);
   const dispatch = useDispatch();
   const landCoverType = useSelector(selectLandCoverType);
@@ -47,10 +76,11 @@ export default function ({navigation}: {navigation: any}) {
   return (
     <>
       <ScrollView>
-        <FormCameraHandle />
+
         {/* The Location Section */}
         <View
           style={{
+            marginTop:5,
             flexDirection: 'column',
             // marginHorizontal: 20,
           }}>
@@ -75,7 +105,7 @@ export default function ({navigation}: {navigation: any}) {
                 flex: 5,
                 margin: 5,
               }}>
-              Capture Location
+              Capture Location using Maps?
             </Text>
             <Switch
               trackColor={{false: '#767577', true: 'pink'}}
@@ -99,7 +129,7 @@ export default function ({navigation}: {navigation: any}) {
                 flex: 5,
                 margin: 5,
               }}>
-              Use maps to capture the location
+              Capture the location
             </Text>
             <Modal
               style={{
@@ -142,14 +172,14 @@ export default function ({navigation}: {navigation: any}) {
               //   setIsEnabled(false);
               // }}
               onPress={() => {
-                setIsMapModalOpen(true);
+                locationSetter();
               }}>
               <Text
                 style={{
                   color: 'black',
                   textAlign: 'center',
                 }}>
-                Open Maps
+                Capture Location
               </Text>
             </TouchableOpacity>
           </View>
@@ -335,6 +365,37 @@ export default function ({navigation}: {navigation: any}) {
 
           {landCoverType == 'Cropland' ? <CropInformation /> : null}
 
+
+          {/* CCE */}
+          <View
+            style={{
+              marginTop: 15,
+              flexDirection: 'row',
+              // marginHorizontal: 20,
+            }}>
+            <Text
+              style={{
+                flex:4,
+                color: 'black',
+                backgroundColor: '#888484',
+                padding: 5,
+                marginLeft: 20,
+              }}>
+              Capture CCE?
+            </Text>
+            <Switch
+              trackColor={{false: '#767577', true: 'pink'}}
+              thumbColor={isCaptureCCE ? 'violet' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => setIsCaptureCCE(t => !t)}
+              value={isCaptureCCE}
+              style={{
+                marginRight:20
+              }}
+            />
+            {isCaptureCCE? <CCE/>: null}
+          </View>
+          <FormCameraHandle />
           <View
             style={{
               marginTop: 15,
