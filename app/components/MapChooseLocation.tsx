@@ -13,15 +13,14 @@ import MapView, {
   Callout,
   LatLng,
   MapPressEvent,
+  MapType,
   Marker,
   MarkerDragStartEndEvent,
   PROVIDER_GOOGLE,
   Region,
 } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 import {Position, PositionError} from '../types';
-import { useNetInfo } from "@react-native-community/netinfo";
-
-
+import {useNetInfo} from '@react-native-community/netinfo';
 
 // import {  } from 'react-native-gesture-handler';
 // import {  } from 'react-native-reanimated/lib/typescript/Animated';
@@ -39,13 +38,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) => void}) => {
+const MapChooser = ({
+  handler,
+}: {
+  handler: (latitude: number, longitude: number) => void;
+}) => {
   const [region, setRegion] = useState<Region>({
     longitude: 0,
     latitude: 0,
     latitudeDelta: 0.0015,
     longitudeDelta: 0.0015,
   });
+  const [mapType, setMapType] = useState<MapType>('standard');
   const [mapCoordinates, setMapCoordinates] = useState<LatLng>({
     latitude: region.latitude,
     longitude: region.longitude,
@@ -55,7 +59,7 @@ const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) =
   return (
     <View style={styles.container}>
       <MapView
-        mapType="satellite"
+        mapType={mapType}
         provider={PROVIDER_GOOGLE} // remove if not using Google Maps
         style={styles.map}
         region={region}
@@ -114,20 +118,53 @@ const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) =
         </Marker>
       </MapView>
       <View
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: 'auto'
-      }}
-      >
-        <View style={{flexDirection: 'row', margin:10, justifyContent:"flex-end"}}>
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: 'auto',
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            margin: 10,
+            justifyContent: 'space-between',
+          }}>
           <TouchableOpacity
-          onPress={() => {
-            handler(mapCoordinates.latitude, mapCoordinates.longitude)
-          }}
-            style={{backgroundColor: 'green', padding: 10, paddingHorizontal:15, borderRadius: 15}}>
+            onPress={() => {
+              setMapType((value) => {
+                if(value == "satellite"){
+                  return "standard";
+                }
+                else return "satellite"
+              })
+            }}
+            style={{
+              backgroundColor: 'lightgreen',
+              padding: 10,
+              paddingHorizontal: 15,
+              borderRadius: 15,
+            }}>
             <Text
-            // @ts-ignore
+              // @ts-ignore
+              style={{
+                fontSize: 18,
+                color:"black"
+              }}>
+              View: {mapType} map
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              handler(mapCoordinates.latitude, mapCoordinates.longitude);
+            }}
+            style={{
+              backgroundColor: 'green',
+              padding: 10,
+              paddingHorizontal: 15,
+              borderRadius: 15,
+            }}>
+            <Text
+              // @ts-ignore
               style={{
                 fontSize: 18,
                 fontWeight: 900,
@@ -166,17 +203,26 @@ const MapChooser = ({handler}: {handler: (latitude: number, longitude: number) =
   );
 };
 // handler is for successful operations and closer for cleaning up things that shouldn't have been happening
-export default function ({handler, closer}: {handler: (latitude: number, longitude: number) => void,  closer: () => void}) {
+export default function ({
+  handler,
+  closer,
+}: {
+  handler: (latitude: number, longitude: number) => void;
+  closer: () => void;
+}) {
   const [isRendered, setIsRendered] = useState(false);
-  const { type, isConnected } = useNetInfo();
+  const {type, isConnected} = useNetInfo();
   useEffect(() => {
-    if(type != "none" && isConnected == true){
+    if (type != 'none' && isConnected == true) {
       setIsRendered(true);
     }
-    if(type == "none" || isConnected == false){
-      Alert.alert("You're not connected to the Internet.", "Connect to the internet to use the maps functionality")
-      if(isRendered == false){
-        closer()
+    if (type == 'none' || isConnected == false) {
+      Alert.alert(
+        "You're not connected to the Internet.",
+        'Connect to the internet to use the maps functionality',
+      );
+      if (isRendered == false) {
+        closer();
       }
     }
     console.log(type, isConnected);

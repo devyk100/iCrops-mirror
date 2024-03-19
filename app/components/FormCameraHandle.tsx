@@ -7,11 +7,6 @@ import {
   Image,
   Alert,
 } from 'react-native';
-import {
-  Camera,
-  useCameraDevice,
-  useCameraPermission,
-} from 'react-native-vision-camera';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';

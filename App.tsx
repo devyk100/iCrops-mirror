@@ -12,6 +12,7 @@ import DataCollection from './app/components/DataCollection';
 import {Provider} from 'react-redux';
 import store from './app/store';
 import MapChooseLocation from './app/components/MapChooseLocation';
+import ImageMarker from './app/components/ImageMarker';
 
 function NotificationsScreen({navigation}: {navigation: any}) {
   return (
@@ -43,7 +44,7 @@ function CustomDrawerContent(props: any) {
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      {/* <NavigationContainer>
         <Drawer.Navigator
           initialRouteName="ICRISAT iCrops"
           screenOptions={{
@@ -67,7 +68,8 @@ export default function App() {
             component={DataCollection}
           />
         </Drawer.Navigator>
-      </NavigationContainer>
+      </NavigationContainer> */}
+      <ImageMarker></ImageMarker>
       {/* <MapChooseLocation></MapChooseLocation> */}
       </Provider>
   );

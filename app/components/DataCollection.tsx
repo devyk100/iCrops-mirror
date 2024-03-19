@@ -107,6 +107,7 @@ export default function ({navigation}: {navigation: any}) {
                 height: '100%',
                 backgroundColor: 'white',
               }}
+              animationType='slide'
               onRequestClose={() => {
                 setIsMapModalOpen(false);
               }}
