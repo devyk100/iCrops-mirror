@@ -1,8 +1,8 @@
 import {Text, View} from 'react-native';
-import CustomModal from './CustomModal';
-import {cropIntensityData, cropsData, livestockData, waterSourceData} from '../data';
+import CustomModal from '../CustomModal';
+import {cropIntensityData, cropsData, livestockData, waterSourceData} from '../../data';
 import {useDispatch} from 'react-redux';
-import {setCropIntensity, setLandCoverType, setLiveStock, setPrimaryCrop, setSecondaryCrop, setWaterSource} from '../features/DataCollectionSlice';
+import {setCropIntensity, setLandCoverType, setLiveStock, setPrimaryCrop, setSecondaryCrop, setWaterSource} from '../../features/DataCollectionSlice';
 
 export default function () {
   const dispatch = useDispatch();

@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import CustomModal from "./CustomModal";
+import CustomModal from "../CustomModal";
 
 export default function(){
     return (

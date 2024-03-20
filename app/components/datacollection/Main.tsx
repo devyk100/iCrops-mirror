@@ -17,7 +17,7 @@ import {
   setLandCoverType,
 } from '../../features/DataCollectionSlice';
 import {useDispatch, useSelector} from 'react-redux';
-import CropInformation from '../CropInformation';
+import CropInformation from './CropInformation';
 import {landData} from '../../data';
 import FormCameraHandle from '../FormCameraHandle';
 import {
@@ -27,7 +27,7 @@ import {
 } from '../../features/LocationSlice';
 import MapChooseLocation from '../MapChooseLocation';
 import Geolocation from '@react-native-community/geolocation';
-import CCE from '../CCE';
+import CCE from './CCE';
 import Location from './Location';
 import LocationOffset from './LocationOffset';
 
