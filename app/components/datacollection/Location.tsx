@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Alert, Modal, Switch, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Button, Modal, Switch, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { clearLocation, selectLocation, setLocation } from "../../features/LocationSlice";
 import MapChooseLocation from "../MapChooseLocation";
@@ -132,7 +132,7 @@ export default function(){
                 }}
               />
             </Modal>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 backgroundColor: '#d4d4d4',
                 padding: 10,
@@ -152,7 +152,8 @@ export default function(){
                 }}>
                 Capture Location
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <Button title="Capture Location" onPress={() => locationSetter()}></Button>
           </View>
 
           <View
@@ -172,7 +173,7 @@ export default function(){
               }}>
               Accuracy Correction: {locationData.accuracy}
             </Text>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 backgroundColor: '#d4d4d4',
                 padding: 10,
@@ -189,7 +190,11 @@ export default function(){
                 }}>
                 CLEAR
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <Button title="Clear" onPress={() => {
+              dispatch(clearLocation());
+              setIsEnabled(false);
+            }}></Button>
           </View>
 
           <View

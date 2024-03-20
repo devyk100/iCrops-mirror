@@ -1,10 +1,41 @@
 import { Slider } from "@miblanchard/react-native-slider";
-import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-
+import { useCallback, useEffect, useState } from "react";
+import { Button, Text, TouchableOpacity, View } from "react-native";
+// @ts-ignore
+import CompassHeading from 'react-native-compass-heading';
+import { useDispatch, useSelector } from "react-redux";
+import { selectDegreesToNorth, setDegreesToNorth } from "../../features/LocationSlice";
 export default function(){
 
   const [distanceToCenter, setDistanceToCenter] = useState(70);
+
+  const [bearingToCenter, setBearingToCenter] = useState<number | null>(null);
+  // const [degreesToNorth, setDegreesToNorth] = useState(0);
+  const degreesToNorth = useSelector(selectDegreesToNorth)
+  const findBearingToCenter = useCallback(() => {
+    console.log("not working")
+    setBearingToCenter(degreesToNorth);
+  }, [degreesToNorth])
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    const degree_update_rate = 30;
+    let timerId = setTimeout(() => console.log("testing"), 10);
+    CompassHeading.start(degree_update_rate, ({heading, accuracy}: {
+      heading: number;
+      accuracy: number;
+    }) => {
+      console.log('CompassHeading: ', heading, accuracy);
+      // setDegreesToNorth(heading);
+      clearTimeout(timerId)
+      timerId = setTimeout(() => dispatch(setDegreesToNorth(heading)), 0);
+    });
+
+    return () => {
+      CompassHeading.stop();
+    };
+  }, []);
+
     return (
         <>
         <View
@@ -38,22 +69,25 @@ export default function(){
                   flex: 6,
                   // padding:5
                 }}>
-                Bearing to Center:
+                Bearing to Center: {bearingToCenter}
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{
                   backgroundColor: '#d4d4d4',
                   padding: 10,
-                  marginTop: 0,
+                  marginTop: 4,
                 }}>
                 <Text
                   style={{
                     color: 'black',
-                    textAlign: 'center',
-                  }}>
+                    // textAlign: 'center',
+                  }}
+                  onPress={() => findBearingToCenter()}
+                  >
                   CAPTURE
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              <Button title="Capture" onPress={() => findBearingToCenter()}></Button>
             </View>
 
             <View

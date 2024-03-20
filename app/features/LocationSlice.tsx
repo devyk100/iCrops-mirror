@@ -5,7 +5,8 @@ const locationSlice = createSlice({
     initialState: {
         latitude: null,
         longitude: null,
-        accuracy: null
+        accuracy: null,
+        degreesToNorth: 0
     },
     reducers:{
         setLatitude: (state, action) => {
@@ -23,10 +24,14 @@ const locationSlice = createSlice({
             state.longitude = null;
             state.latitude = null;
             state.accuracy = null;
+        },
+        setDegreesToNorth: (state, action) => {
+            state.degreesToNorth = action.payload;
         }
     }
 })
 
-export const { setLatitude, setLongitude, clearLocation, setLocation}  = locationSlice.actions 
+export const { setLatitude, setLongitude, clearLocation, setDegreesToNorth ,setLocation}  = locationSlice.actions 
 export default locationSlice.reducer;
 export const selectLocation = (state:any) => state.location;
+export const selectDegreesToNorth = (state:any) => state.location.degreesToNorth;

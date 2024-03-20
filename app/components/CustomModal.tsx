@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Alert, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Button, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 type dataType = {
     value: number;
@@ -71,7 +71,7 @@ export default function ({data, action} : {
                   </ScrollView>
                 </View>
               </Modal>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={{
                   backgroundColor: '#d4d4d4',
                   padding: 10,
@@ -85,7 +85,8 @@ export default function ({data, action} : {
                   }}>
                   {data[modalValue-1]?.title}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+              <Button title={data[modalValue-1]?.title} onPress={() => setModalVisible(t => !t)}></Button>
         </>
     )
 }

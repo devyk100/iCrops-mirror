@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Button, View} from 'react-native';
+import {Button, Image, Text, View} from 'react-native';
 import {
   DrawerContentScrollView,
   DrawerItem,
@@ -9,14 +9,71 @@ import {
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
 import LandingPage from './app/components/LandingPage';
 import DataCollection from './app/components/datacollection/Main';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux';
 import store from './app/store';
+import {selectDegreesToNorth, selectLocation} from './app/features/LocationSlice';
+// @ts-ignore
+import compassImage from './app/assets/compass.png';
 
 function NotificationsScreen({navigation}: {navigation: any}) {
   return (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <Button onPress={() => navigation.goBack()} title="Go back home" />
     </View>
+  );
+}
+
+function DataCollectionHeader() {
+  const locationData = useSelector(selectLocation);
+  const degreesToNorth = useSelector(selectDegreesToNorth);
+  return (
+    <>
+      {/* <View style={{
+      height:"20%",
+      width:"100%",
+      backgroundColor:"red"
+    }}> */}
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '100%',
+          alignItems: 'center',
+        }}>
+        <Text
+            // @ts-ignore
+          style={{
+            color: 'red',
+            fontSize:20,
+            fontWeight:600
+          }}>
+          Data Collection
+        </Text>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={compassImage}
+            style={{
+              height: 40,
+              width: 40,
+              transform:[{rotate:`${-(40+ (degreesToNorth))}deg`}]
+            }}></Image>
+          <Text
+            style={{
+              color: 'blue',
+            }}>
+            {locationData.accuracy
+              ? Math.round(locationData.accuracy) + ' m'
+              : null}
+          </Text>
+        </View>
+      </View>
+      {/* </View> */}
+    </>
   );
 }
 
@@ -62,13 +119,16 @@ export default function App() {
           />
           <Drawer.Screen
             name="datacollection"
-            options={{title: 'Data Collection'}}
+            options={{
+              headerTitle: () => <DataCollectionHeader />,
+              title: 'Data Collection',
+            }}
             component={DataCollection}
           />
         </Drawer.Navigator>
       </NavigationContainer>
       {/* <ImageMarker></ImageMarker> */}
       {/* <MapChooseLocation></MapChooseLocation> */}
-      </Provider>
+    </Provider>
   );
 }
