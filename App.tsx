@@ -8,11 +8,9 @@ import {
 } from '@react-navigation/drawer';
 import {NavigationContainer, NavigationState} from '@react-navigation/native';
 import LandingPage from './app/components/LandingPage';
-import DataCollection from './app/components/DataCollection';
+import DataCollection from './app/components/datacollection/Main';
 import {Provider} from 'react-redux';
 import store from './app/store';
-import MapChooseLocation from './app/components/MapChooseLocation';
-import ImageMarker from './app/components/ImageMarker';
 
 function NotificationsScreen({navigation}: {navigation: any}) {
   return (

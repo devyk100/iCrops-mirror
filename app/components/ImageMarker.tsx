@@ -84,7 +84,7 @@ async function imageProcessing(
   longitude: number,
   username: string,
   landType: string,
-  setLoader: (value:boolean) => void
+  setLoader: () => void
 ) {
   if (!cropName || cropName == '') {
     Alert.alert('Enter the crop name', "Type 0 to confirm if there's no crop to put in the field");
@@ -129,13 +129,13 @@ async function imageProcessing(
     scale: 1,
     quality: 100,
     filename: cropName != "0"
-      ? `${landType} crop: ${cropName} by ${username}`
+      ? `crop: ${cropName} ${landType} by ${username}`
       : `${landType} by ${username}`,
     saveFormat: ImageFormat.png,
   };
   const permimssionPass = await hasAndroidPermission();
   console.log(permimssionPass);
-  setLoader(true);
+  setLoader();
   const path = await Marker.markText(options);
   const resUri = 'file:' + path;
   const newUri = await CameraRoll.saveAsset(resUri, {
@@ -200,14 +200,14 @@ export default function ({
 
   const getNewLocationHandler = useCallback(() => {
     Geolocation.setRNConfiguration({
-      skipPermissionRequests: false,
+      skipPermissionRequests: true,
       authorizationLevel: 'auto',
       enableBackgroundLocationUpdates: 'true',
       locationProvider: 'auto',
     });
     Geolocation.getCurrentPosition(
       (pos: MapPosition) => {
-        console.log(pos);
+        console.log(pos, 'hey');
         setCoordinates({
           longitude: pos.coords.longitude,
           latitude: pos.coords.latitude,
@@ -215,18 +215,22 @@ export default function ({
       },
       (error: any) =>
         Alert.alert('GetCurrentPosition Error', JSON.stringify(error)),
-      {enableHighAccuracy: true},
+        {
+          enableHighAccuracy: true
+        },
+      // {}
     );
   }, [selectedId]);
 
   const locationFromFormHandler = useCallback(() => {
+    if(!toRender || !locationData.latitude) return;
     console.log('locationFromHandler called');
     setCoordinates({
       latitude: locationData.latitude,
       longitude: locationData.longitude,
     });
     console.log(locationData);
-  }, [locationData]);
+  }, [locationData, toRender]);
 
   const locationFromMapHandler = useCallback(() => {
     setIsMapModalOpen(true);
@@ -307,8 +311,12 @@ export default function ({
                   borderRadius: 20,
                 }}
                 onPress={() => {
-                  imageProcessing(imageUri, cropName, (coordinates.latitude), coordinates.longitude, username, landType, setLoading)
+                  imageProcessing(imageUri, cropName, (coordinates.latitude), coordinates.longitude, username, landType, () => {
+                    setLoading(true)
+                    
+                  })
                   .then((uri:any) => {
+                    if(uri == null) return;
                     dispatch(addImage(uri));
                     setLoading(false);
                     closer();
@@ -387,19 +395,48 @@ export default function ({
                   setIsMapModalOpen(false);
                 }}
               />
+            </Modal>
+          </View>
+        </Modal>
             <Modal visible={loading} style={{
               width: "100%",
               height: "100%",
               backgroundColor:"white",
               zIndex: 10,
-              position: "absolute"
+              position: "absolute",
+              flexDirection:"column",
+              alignItems: "center",
+              justifyContent:"center"
             }}
             >
-            <ActivityIndicator />
+              <View style={{
+                flexDirection:"row",
+                alignItems:"center",
+                justifyContent:"center",
+                width:"100%",
+                height:"100%",
+              }}>
+
+            <ActivityIndicator style={{
+              height:100,
+              width:100,
+              flex:1
+            }}
+            color={"lightgreen"}
+            size={"large"}
+            />
+            <Text 
+            // @ts-ignore
+            style={{
+              color:"black",
+              // width:"100%",
+              fontSize:18,
+              fontWeight:700,
+              flex:3,
+              // textAlign:"center"
+            }}>Applying the tag...</Text>
+            </View>
             </Modal>
-            </Modal>
-          </View>
-        </Modal>
       </>
     );
   else return null;
