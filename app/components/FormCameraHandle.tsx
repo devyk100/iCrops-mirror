@@ -6,46 +6,223 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  PermissionsAndroid,
+  Button,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {useDispatch, useSelector} from 'react-redux';
-import {addImage, removeImage, selectImagesList} from '../features/DataCollectionSlice';
+import {
+  addImage,
+  removeImage,
+  selectImagesList,
+  selectLandCoverType,
+  selectPrimaryCrop,
+} from '../features/DataCollectionSlice';
 import {ScrollView} from 'react-native-gesture-handler';
-import ImageMarker from './ImageMarker';
+import Marker, {
+  ImageFormat,
+  Position,
+  TextBackgroundType,
+} from 'react-native-image-marker';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {
+  clearLocation,
+  selectLocation,
+  setLocation,
+} from '../features/LocationSlice';
 
+async function hasAndroidPermission() {
+  const getCheckPermissionPromise = () => {
+    // @ts-ignore
+    if (Platform.Version >= 33) {
+      return Promise.all([
+        PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        ),
+        PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+        ),
+      ]).then(
+        ([hasReadMediaImagesPermission, hasReadMediaVideoPermission]) =>
+          hasReadMediaImagesPermission && hasReadMediaVideoPermission,
+      );
+    } else {
+      return PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      );
+    }
+  };
+
+  const hasPermission = await getCheckPermissionPromise();
+  if (hasPermission) {
+    return true;
+  }
+  const getRequestPermissionPromise = () => {
+    // @ts-ignore
+    if (Platform.Version >= 33) {
+      return PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+      ]).then(
+        statuses =>
+          statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+            PermissionsAndroid.RESULTS.GRANTED &&
+          statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+            PermissionsAndroid.RESULTS.GRANTED,
+      );
+    } else {
+      return PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      ).then(status => status === PermissionsAndroid.RESULTS.GRANTED);
+    }
+  };
+
+  return await getRequestPermissionPromise();
+}
+
+const requestCameraPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+      {
+        title: 'The app needs the permissions to access your camera',
+        message:
+          'The camera permission is required to be able to click the photo ',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('You can use the camera');
+    } else {
+      console.log('Camera permission denied');
+    }
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
+const imageProcessing = 
+  async (
+    imageUri: string,
+    cropName: string,
+    latitude: number,
+    longitude: number,
+    username: string,
+    landType: string,
+    completedTask: (newUri: string) => void,
+  ) => {
+    // if (!cropName || cropName == '') {
+    //   Alert.alert(
+    //     'Enter the crop name',
+    //     "Type 0 to confirm if there's no crop to put in the field",
+    //   );
+    //   return null;
+    // }
+    console.log(cropName);
+    
+    if (!latitude) {
+      Alert.alert(
+        "The location wasn't set, please set it.",
+        'Set the location',
+      );
+      return null;
+    }
+    console.log('inside of image processor');
+    const options = {
+      // background image
+      backgroundImage: {
+        src: {uri: imageUri},
+        scale: 1,
+      },
+      watermarkTexts: [
+        {
+          text:
+            (cropName != null && cropName != '')
+              ? `Latitude: ${latitude} \nLatitude: ${longitude}\nCrop: ${cropName}\n${new Date()}`
+              : `Latitude: ${latitude} \nLatitude: ${longitude}\nLand Cover Type: ${landType}\n${new Date()}`,
+          position: {
+            position: Position.topLeft,
+          },
+          style: {
+            color: '#ffffff',
+            fontSize: 30,
+            fontName: 'Arial',
+            shadowStyle: {
+              dx: 0,
+              dy: 0,
+              radius: 15,
+              color: '#000000',
+            },
+            textBackgroundStyle: {
+              padding: '0% 1%',
+              type: TextBackgroundType.none,
+              color: '#000000',
+            },
+          },
+        },
+      ],
+      scale: 1,
+      quality: 100,
+      filename:
+        cropName != '0'
+          ? `crop: ${cropName} ${landType} by ${username}`
+          : `${landType} by ${username}`,
+      saveFormat: ImageFormat.png,
+    };
+    const permimssionPass = await hasAndroidPermission();
+    console.log(permimssionPass);
+    const path = await Marker.markText(options);
+    const resUri = 'file:' + path;
+    const newUri = await CameraRoll.saveAsset(resUri, {
+      type: 'auto',
+      album: 'geotagged photos',
+    });
+    completedTask(newUri.node.image.uri);
+  }
 export default function () {
   const imageList = useSelector(selectImagesList);
   const dispatch = useDispatch();
-  const [isImageTaggerModalOpen, setIsImageTaggerModalOpen] = useState(false);
-  const [currentImageUri, setCurrentImageUri] = useState<string>("");
-  // const [imageUri, setImageUri] = useState("file:///data/user/0/com.icrops/cache/rn_image_picker_lib_temp_803e2e1a-f692-42ab-800b-9c828e869acb.jpg");
-  const openGallery = useCallback(async () => {
-    const result = await launchImageLibrary(
-      {mediaType: 'photo'},
-      (res: any) => {
-        try {
-          // dispatch(addImage(res.assets[0].uri));
-          setCurrentImageUri(res.assets[0].uri)
-          setIsImageTaggerModalOpen(true);
-        } catch (e) {
-          console.log('Image saving rejected');
-        }
-      },
-    );
-    console.log(result);
-  }, []);
+  const locationData = useSelector(selectLocation);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
+  const landCoverType = useSelector(selectLandCoverType);
+  const cropName = useSelector(selectPrimaryCrop)
+  //retrieve the actual username from here
+  const username = 'dummy';
+  useEffect(() => {
+    console.log(cropName, locationData)
+  }, [locationData, cropName, username, landCoverType]);
   const openCamera = useCallback(async () => {
+    if(!locationData.latitude || !landCoverType){
+      Alert.alert("Fill the previous fields of location beforehand", "Make sure you've filled land cover type, crop name(if applicable), and you've captured the location.");
+      return;
+    }
+    await requestCameraPermission();
     const result = await launchCamera({mediaType: 'photo'}, (res: any) => {
       try {
-        // dispatch(addImage(res.assets[0].uri));
-        setCurrentImageUri(res.assets[0].uri)
-        setIsImageTaggerModalOpen(true);
+        console.log(locationData);
+        imageProcessing(
+          res.assets[0].uri,
+          cropName,
+          locationData.latitude,
+          locationData.longitude,
+          username,
+          landCoverType,
+          newUri => {
+            setIsProcessingImage(false);
+            dispatch(addImage(newUri));
+          },
+        );
+        setIsProcessingImage(true);
       } catch (e) {
-        console.log('Image saving rejected');
+        console.log('Image saving rejected', e);
       }
     });
-  }, []);
+  }, [locationData, cropName, username, landCoverType]);
   return (
     <>
       <View
@@ -54,15 +231,15 @@ export default function () {
         }}>
         <ScrollView horizontal={true}>
           {imageList.map((value: string) => {
-            if (value == 'null') return null;
+            if (value == null) return null;
             return (
               <View>
                 <Image
                   source={{uri: value}}
                   style={{
-                    width: 150, // Adjust width as needed
-                    height: 150, // Adjust height as needed
-                    resizeMode: 'contain', // You can adjust resizeMode as per your requirement
+                    width: 150,
+                    height: 150,
+                    resizeMode: 'contain',
                     marginRight: 5,
                   }}></Image>
                 <TouchableOpacity
@@ -74,16 +251,24 @@ export default function () {
                     borderRadius: 10,
                   }}
                   onPress={() => {
-                    Alert.alert('Are you sure you want to delete this image?', "Once deleted you can't recover it.", [
+                    Alert.alert(
+                      'Are you sure you want to delete this image?',
+                      "Once deleted you can't recover it.",
+                      [
                         {
                           text: 'Cancel',
-                          onPress: () => {console.log("delete operation canceled.")}
-                        //   style: 'cancel',
+                          onPress: () => {
+                            console.log('delete operation canceled.');
+                          },
+                          //   style: 'cancel',
                         },
-                        {text: 'OK', onPress: () => dispatch(removeImage(value))},
-                      ]);
-                  }}
-                  >
+                        {
+                          text: 'OK',
+                          onPress: () => dispatch(removeImage(value)),
+                        },
+                      ],
+                    );
+                  }}>
                   <Text
                     style={{color: 'red', width: '100%', textAlign: 'center'}}>
                     X
@@ -95,14 +280,13 @@ export default function () {
         </ScrollView>
         <View
           style={{
-            width: '100%',
             flexDirection: 'row',
-            paddingHorizontal: 20,
-            marginVertical: 10,
+            // paddingHorizontal: 20,
+            // marginVertical: 10,
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => {
               openCamera();
             }}
@@ -114,20 +298,56 @@ export default function () {
               borderRadius: 20,
             }}>
             <Text>TAKE PICTURE</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+          </TouchableOpacity> */}
+          <Button
+            title="Take Picture"
             onPress={() => {
-              openGallery();
-            }}
+              openCamera();
+            }}></Button>
+
+          {/* The processing modal */}
+          <Modal
+            visible={isProcessingImage}
             style={{
-              flex: 1,
-              backgroundColor: 'grey',
-              padding: 10,
-              borderRadius: 20,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'white',
+              zIndex: 10,
+              position: 'absolute',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            <Text>Gallery</Text>
-          </TouchableOpacity>
-          <ImageMarker toRender={isImageTaggerModalOpen} closer={() => setIsImageTaggerModalOpen(false)} imageUri={currentImageUri}/>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
+              }}>
+              <ActivityIndicator
+                style={{
+                  height: 100,
+                  width: 100,
+                  flex: 1,
+                }}
+                color={'lightgreen'}
+                size={'large'}
+              />
+              <Text
+                // @ts-ignore
+                style={{
+                  color: 'black',
+                  // width:"100%",
+                  fontSize: 18,
+                  fontWeight: 700,
+                  flex: 3,
+                }}>
+                Applying the tag...
+              </Text>
+            </View>
+          </Modal>
         </View>
       </View>
     </>

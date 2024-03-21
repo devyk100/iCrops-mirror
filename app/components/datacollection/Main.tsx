@@ -30,6 +30,7 @@ import Geolocation from '@react-native-community/geolocation';
 import CCE from './CCE';
 import Location from './Location';
 import LocationOffset from './LocationOffset';
+import Description from './Description';
 
 export default function ({navigation}: {navigation: any}) {
   const locationData = useSelector(selectLocation);
@@ -107,7 +108,7 @@ export default function ({navigation}: {navigation: any}) {
                 padding: 5,
                 marginLeft: 20,
               }}>
-              Capture CCE?
+              {isCaptureCCE?"CCE Parameters": "Capture CCE?"}
             </Text>
             <Switch
               trackColor={{false: '#767577', true: 'pink'}}
@@ -119,9 +120,28 @@ export default function ({navigation}: {navigation: any}) {
                 marginRight: 20,
               }}
             />
-            {isCaptureCCE ? <CCE /> : null}
           </View>
+            {isCaptureCCE ? <CCE /> : null}
+            <Description />
+
+            {/* Photo Section */}
+            <View
+            style={{
+              marginTop: 15,
+              flexDirection: 'column',
+              // marginHorizontal: 20,
+            }}>
+            <Text
+              style={{
+                color: 'black',
+                backgroundColor: '#888484',
+                padding: 5,
+                marginHorizontal: 20,
+              }}>
+              Photo 
+            </Text>
           <FormCameraHandle />
+          </View>
           <View
             style={{
               marginTop: 15,

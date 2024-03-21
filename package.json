@@ -21,6 +21,7 @@
     "react": "18.2.0",
     "react-native": "0.73.6",
     "react-native-compass-heading": "^1.5.0",
+    "react-native-date-picker": "^4.4.2",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-image-marker": "^1.2.6",
     "react-native-image-picker": "^7.1.1",

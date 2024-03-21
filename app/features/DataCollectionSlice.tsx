@@ -6,14 +6,34 @@ export const counterSlice = createSlice({
   initialState: {
     // latitude: null,
     // longitude: null,
-    images: ["null"], //null for typescript to infer a string type
+    images: [null], //null for typescript to infer a string type
     distanceToCenter: null,
     landCoverType: null,
-    waterSource: null,
-    cropIntensity: null,
-    primaryCrop: null,
-    secondaryCrop: null,
-    liveStock: null
+    cropInformation:{
+      isCaptured:false,
+      waterSource: null,
+      cropIntensity: null,
+      primaryCrop: null,
+      secondaryCrop: null,
+      liveStock: null,
+      croppingPattern: null,
+      remarks: null,
+      additionalSeasons: [
+        // {  --> Schema
+        //  name: "Meher Season",
+        //  crop: "PigeonPea" 
+        // },
+      ]
+    },
+    CCE:{
+      isCaptured: false,
+      sampleSize: null,
+      grainWeight: null,
+      biomassWeight: null,
+      cultivar: null,
+      sowDate: null,
+      harvestDate: null
+    }
   },
   reducers: {
     // setLatitute: (state, action) => {
@@ -32,11 +52,13 @@ export const counterSlice = createSlice({
     setLandCoverType: (state, action) => {
         state.landCoverType = action.payload;
     },
-    setWaterSource: (state, action) => {state.waterSource = action.payload},
-    setCropIntensity: (state, action) => {state.cropIntensity = action.payload},
-    setPrimaryCrop: (state, action) => {state.primaryCrop = action.payload},
-    setSecondaryCrop: (state, action) => {state.secondaryCrop = action.payload},
-    setLiveStock: (state, action) => {state.liveStock = action.payload},
+    setWaterSource: (state, action) => {state.cropInformation.waterSource = action.payload},
+    setCropIntensity: (state, action) => {state.cropInformation.cropIntensity = action.payload},
+    setPrimaryCrop: (state, action) => {console.log("check");state.cropInformation.primaryCrop = action.payload;
+    },
+    setSecondaryCrop: (state, action) => {state.cropInformation.secondaryCrop = action.payload},
+    setLiveStock: (state, action) => {state.cropInformation.liveStock = action.payload},
+    setCroppingPattern: (state, action) => {state.cropInformation.croppingPattern = action.payload},
     //images section
     addImage: (state, action) => {
         state.images.push(action.payload);
@@ -50,10 +72,11 @@ export const counterSlice = createSlice({
   }
 })
 
-export const { setLandCoverType, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage, removeImage } = counterSlice.actions
+export const { setLandCoverType, setCroppingPattern, incrementByAmount, setWaterSource, setCropIntensity, setPrimaryCrop, setSecondaryCrop, setLiveStock, addImage, removeImage } = counterSlice.actions
 
 export default counterSlice.reducer
 
 export const selectLandCoverType = (state:any) => state.dataform.landCoverType;
-export const selectWaterSourceType = (state:any) => state.dataform.waterSource;
+export const selectWaterSourceType = (state:any) => state.dataform.cropInformation.waterSource;
 export const selectImagesList = (state:any) => state.dataform.images;
+export const selectPrimaryCrop = (state: any) => state.dataform.cropInformation.primaryCrop;

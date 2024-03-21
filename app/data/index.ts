@@ -201,3 +201,19 @@ export const livestockData = [
         title: "Sheep"
     },
 ]
+
+
+export const croppingPatternData = [
+    {
+        value: 1,
+        title: "Unknown"
+    },
+    {
+        value: 2,
+        title: "Mixed"
+    },
+    {
+        value: 3,
+        title: "Intercropping"
+    }
+]

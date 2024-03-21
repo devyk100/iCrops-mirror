@@ -5856,6 +5856,11 @@ react-native-compass-heading@^1.5.0:
   resolved "https://registry.npmjs.org/react-native-compass-heading/-/react-native-compass-heading-1.5.0.tgz"
   integrity sha512-FQwQYyjH2eZttM90HS2LGuxSC+cRDdRHfenC1o1qmLmGniDlr+sxUMw++5zke6LunaRualv6P2yakFDOj+5TUA==
 
+react-native-date-picker@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.4.2.tgz#f7bb9daa8559237e08bd30f907ee8487a6e2a6ec"
+  integrity sha512-wYKN8nYWhETVHJV/+Im30JOdzkFRwYRrDlEOyyYesOjt+1JTFJh9M7K5CqePLOIB4Nxlf2f2lRSI0VoUyFIovA==
+
 react-native-gesture-handler@^2.15.0:
   version "2.15.0"
   resolved "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-2.15.0.tgz"

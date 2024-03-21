@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearLocation, selectLocation, setLocation } from "../../features/LocationSlice";
 import MapChooseLocation from "../MapChooseLocation";
 import Geolocation from "@react-native-community/geolocation";
+import { Position } from "../../types";
 
 export default function(){
     const [isEnabled, setIsEnabled] = useState(false);
@@ -37,7 +38,7 @@ export default function(){
       locationProvider: 'auto',
     });
     Geolocation.getCurrentPosition(
-      (pos: any) => {
+      (pos: Position) => {
         // setPosition(JSON.stringify(pos));
         dispatch(setLocation(pos.coords))
         // dispatch(setLatitude(pos.coords.latitude));

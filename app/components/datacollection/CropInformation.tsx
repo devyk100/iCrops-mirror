@@ -1,8 +1,22 @@
-import {Text, View} from 'react-native';
+import {Text, TextInput, View} from 'react-native';
 import CustomModal from '../CustomModal';
-import {cropIntensityData, cropsData, livestockData, waterSourceData} from '../../data';
+import {
+  cropIntensityData,
+  croppingPatternData,
+  cropsData,
+  livestockData,
+  waterSourceData,
+} from '../../data';
 import {useDispatch} from 'react-redux';
-import {setCropIntensity, setLandCoverType, setLiveStock, setPrimaryCrop, setSecondaryCrop, setWaterSource} from '../../features/DataCollectionSlice';
+import {
+  setCropIntensity,
+  setCroppingPattern,
+  setLandCoverType,
+  setLiveStock,
+  setPrimaryCrop,
+  setSecondaryCrop,
+  setWaterSource,
+} from '../../features/DataCollectionSlice';
 
 export default function () {
   const dispatch = useDispatch();
@@ -42,9 +56,7 @@ export default function () {
           </Text>
           <CustomModal
             data={waterSourceData}
-            action={payload =>
-              dispatch(setWaterSource(payload))
-            }></CustomModal>
+            action={payload => dispatch(setWaterSource(payload))}></CustomModal>
         </View>
         <View
           style={{
@@ -69,7 +81,6 @@ export default function () {
             action={payload =>
               dispatch(setCropIntensity(payload))
             }></CustomModal>
-          
         </View>
         <View
           style={{
@@ -86,15 +97,12 @@ export default function () {
               flex: 6,
               // padding:5
             }}>
-            Primary Crop
+            Primary Crop (Kharif Crop)
           </Text>
 
           <CustomModal
             data={cropsData}
-            action={payload =>
-              dispatch(setPrimaryCrop(payload))
-            }></CustomModal>
-          
+            action={payload => dispatch(setPrimaryCrop(payload))}></CustomModal>
         </View>
         <View
           style={{
@@ -111,7 +119,7 @@ export default function () {
               flex: 6,
               // padding:5
             }}>
-            Secondary Crop
+            Secondary Crop (Rabi Season)
           </Text>
 
           <CustomModal
@@ -119,7 +127,6 @@ export default function () {
             action={payload =>
               dispatch(setSecondaryCrop(payload))
             }></CustomModal>
-          
         </View>
         <View
           style={{
@@ -139,15 +146,64 @@ export default function () {
             Live Stock
           </Text>
 
-
           <CustomModal
             data={livestockData}
-            action={payload =>
-              dispatch(setLiveStock(payload))
-            }></CustomModal>
-          
+            action={payload => dispatch(setLiveStock(payload))}></CustomModal>
         </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            //   width:"100%",
+            marginHorizontal: 25,
+            marginTop: 5,
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              flex: 6,
+              // padding:5
+            }}>
+            Cropping Pattern
+          </Text>
 
+          <CustomModal
+            data={croppingPatternData}
+            action={payload =>
+              dispatch(setCroppingPattern(payload))
+            }></CustomModal>
+        </View>
+        <View
+          style={{
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            //   width:"100%",
+            marginHorizontal: 25,
+            marginTop: 5,
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              flex: 6,
+              textAlign: 'left',
+              width: '100%',
+              // padding:5
+            }}>
+            Remarks and notes:
+          </Text>
+          <TextInput multiline={true} numberOfLines={3} style={{
+            backgroundColor:"#eef7eb",
+            width:"100%",
+            padding:10,
+            textAlignVertical:"top",
+            borderWidth:1,
+            borderColor:"grey",
+            borderRadius:10,
+            marginTop:5
+          }}></TextInput>
+        </View>
       </View>
     </>
   );
