@@ -217,3 +217,23 @@ export const croppingPatternData = [
         title: "Intercropping"
     }
 ]
+
+
+export const seasonData = [
+    {
+        value: 1,
+        title: "Summer/Dry/Zaid Season"
+    },
+    {
+        value: 2,
+        title: "Meher Season"
+    },
+    {
+        value: 3,
+        title: "Belg Season"
+    },
+    {
+        value: 4,
+        title: "Aus Season"
+    },
+]

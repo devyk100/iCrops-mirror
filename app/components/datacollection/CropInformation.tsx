@@ -17,6 +17,7 @@ import {
   setSecondaryCrop,
   setWaterSource,
 } from '../../features/DataCollectionSlice';
+import AdditionalSeasons from './AdditionalSeasons';
 
 export default function () {
   const dispatch = useDispatch();
@@ -128,6 +129,7 @@ export default function () {
               dispatch(setSecondaryCrop(payload))
             }></CustomModal>
         </View>
+        <AdditionalSeasons/>
         <View
           style={{
             flexDirection: 'row',
@@ -174,6 +176,7 @@ export default function () {
               dispatch(setCroppingPattern(payload))
             }></CustomModal>
         </View>
+
         <View
           style={{
             flexDirection: 'column',
@@ -199,6 +202,7 @@ export default function () {
             padding:10,
             textAlignVertical:"top",
             borderWidth:1,
+            color:'black',
             borderColor:"grey",
             borderRadius:10,
             marginTop:5

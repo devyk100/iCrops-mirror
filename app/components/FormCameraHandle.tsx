@@ -285,6 +285,7 @@ export default function () {
             // marginVertical: 10,
             alignItems: 'center',
             justifyContent: 'center',
+            paddingTop: 7
           }}>
           {/* <TouchableOpacity
             onPress={() => {

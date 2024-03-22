@@ -38,6 +38,7 @@ export default function () {
             backgroundColor: 'white',
             flex: 1,
             paddingHorizontal: 10,
+            color:"black",
             marginHorizontal: 5,
             borderWidth: 1,
             borderColor: 'grey',
@@ -72,6 +73,7 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
+            color:"black",
             borderColor: 'grey',
             borderRadius: 14,
           }}></TextInput>
@@ -104,6 +106,7 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
+            color:"black",
             borderColor: 'grey',
             borderRadius: 14,
           }}></TextInput>
@@ -135,6 +138,7 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
+            color: "black",
             borderColor: 'grey',
             borderRadius: 14,
           }}></TextInput>
