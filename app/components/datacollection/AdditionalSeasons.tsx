@@ -2,7 +2,7 @@ import {Button, Modal, ScrollView, Text, TouchableOpacity, View} from 'react-nat
 import CustomModal from '../CustomModal';
 import {cropsData, seasonData} from '../../data';
 import {useDispatch, useSelector} from 'react-redux';
-import {addSeason, deleteSeason, selectAdditionalSeasons, setSecondaryCrop} from '../../features/DataCollectionSlice';
+import {addSeason, deleteSeason, selectAdditionalSeasons, setCropForAdditionalSeason} from '../../features/DataCollectionSlice';
 import { useState } from 'react';
 
 export default function () {
@@ -97,8 +97,12 @@ export default function () {
               </Text>
               <CustomModal
                 data={cropsData}
-                action={payload =>
-                  dispatch(setSecondaryCrop(payload))
+                action={payload => {dispatch(setCropForAdditionalSeason({
+                  index: index,
+                  crop: payload
+                }))
+                console.log(payload, "additional season", index);
+              }
                 }></CustomModal>
                 <Button title='-' color={"red"} onPress={() => {
                     dispatch(deleteSeason(index))

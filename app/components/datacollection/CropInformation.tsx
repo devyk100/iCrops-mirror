@@ -125,8 +125,10 @@ export default function () {
 
           <CustomModal
             data={cropsData}
-            action={payload =>
+            action={payload =>{
               dispatch(setSecondaryCrop(payload))
+              console.log(payload)
+            }
             }></CustomModal>
         </View>
         <AdditionalSeasons/>

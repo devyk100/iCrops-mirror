@@ -68,6 +68,7 @@ export const counterSlice = createSlice({
       state.cropInformation.primaryCrop = action.payload;
     },
     setSecondaryCrop: (state, action) => {
+      console.log(action)
       state.cropInformation.secondaryCrop = action.payload;
     },
     addSeason: (state, action) => {
@@ -75,6 +76,10 @@ export const counterSlice = createSlice({
         name: action.payload,
         crop: null,
       });
+    },
+    setCropForAdditionalSeason: (state, action) => {
+      console.log(state.cropInformation.additionalSeasons[action.payload.index])
+      state.cropInformation.additionalSeasons[action.payload.index].crop = action.payload.crop;
     },
     deleteSeason: (state, action) => {
       state.cropInformation.additionalSeasons.splice(action.payload, 1);
@@ -119,6 +124,7 @@ export const {
   deleteSeason,
   setIsCapturedCCE,
   addSeason,
+  setCropForAdditionalSeason,
   resetState
 } = counterSlice.actions;
 
@@ -128,7 +134,5 @@ export const selectLandCoverType = (state: any) => state.dataform.landCoverType;
 export const selectWaterSourceType = (state: any) =>
   state.dataform.cropInformation.waterSource;
 export const selectImagesList = (state: any) => state.dataform.images;
-export const selectPrimaryCrop = (state: any) =>
-  state.dataform.cropInformation.primaryCrop;
 export const selectAdditionalSeasons = (state:any) => state.dataform.cropInformation.additionalSeasons;
 export const selectDataCollection = (state:any) => state.dataform
