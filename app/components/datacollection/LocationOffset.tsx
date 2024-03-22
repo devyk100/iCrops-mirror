@@ -5,6 +5,8 @@ import { Button, Text, TouchableOpacity, View } from "react-native";
 import CompassHeading from 'react-native-compass-heading';
 import { useDispatch, useSelector } from "react-redux";
 import { selectDegreesToNorth, setDegreesToNorth } from "../../features/LocationSlice";
+import { hell, storage } from "../../localStorage";
+import { setBearingToCenterData, setDistanceToCenterData } from "../../features/DataCollectionSlice";
 export default function(){
 
   const [distanceToCenter, setDistanceToCenter] = useState(70);
@@ -13,10 +15,11 @@ export default function(){
   // const [degreesToNorth, setDegreesToNorth] = useState(0);
   const degreesToNorth = useSelector(selectDegreesToNorth)
   const findBearingToCenter = useCallback(() => {
-    console.log("not working")
-    setBearingToCenter(degreesToNorth);
+    setBearingToCenter(() => {
+      dispatch(setBearingToCenterData(degreesToNorth))
+      return degreesToNorth
+    });
   }, [degreesToNorth])
-
   const dispatch = useDispatch();
   useEffect(() => {
     const degree_update_rate = 30;
@@ -111,7 +114,10 @@ export default function(){
                 value={distanceToCenter}
                 step={1}
                 // @ts-ignore
-                onValueChange={value => setDistanceToCenter(value)}
+                onValueChange={value => setDistanceToCenter(() => {
+                  dispatch(setDistanceToCenterData(value))
+                  return value
+                })}
                 containerStyle={{
                   marginHorizontal: 20,
                 }}

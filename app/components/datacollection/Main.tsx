@@ -14,6 +14,7 @@ import {Slider} from '@miblanchard/react-native-slider';
 import CustomModal from '../CustomModal';
 import {
   selectLandCoverType,
+  setIsCapturedCCE,
   setLandCoverType,
 } from '../../features/DataCollectionSlice';
 import {useDispatch, useSelector} from 'react-redux';
@@ -31,11 +32,13 @@ import CCE from './CCE';
 import Location from './Location';
 import LocationOffset from './LocationOffset';
 import Description from './Description';
+import QualityControl from './QualityControl';
 
 export default function ({navigation}: {navigation: any}) {
   const locationData = useSelector(selectLocation);
   const [isCaptureCCE, setIsCaptureCCE] = useState(false);
   const dispatch = useDispatch();
+  const [dummy, setDummy] = useState(0);
   const landCoverType = useSelector(selectLandCoverType);
   return (
     <>
@@ -114,7 +117,12 @@ export default function ({navigation}: {navigation: any}) {
               trackColor={{false: '#767577', true: 'pink'}}
               thumbColor={isCaptureCCE ? 'violet' : '#f4f3f4'}
               ios_backgroundColor="#3e3e3e"
-              onValueChange={() => setIsCaptureCCE(t => !t)}
+              onValueChange={() => {
+                setIsCaptureCCE(t => {
+                  dispatch(setIsCapturedCCE(!t))
+                  return !t
+                })
+              }}
               value={isCaptureCCE}
               style={{
                 marginRight: 20,
@@ -158,7 +166,9 @@ export default function ({navigation}: {navigation: any}) {
               Quality Control
             </Text>
           </View>
+          <QualityControl navigation={navigation} rerender={() => setDummy(Math.random())}></QualityControl>
         </View>
+        {dummy? null:null}
       </ScrollView>
     </>
   );

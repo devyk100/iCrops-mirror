@@ -1,54 +1,56 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 
+
+const initialState = {
+  // latitude: null,
+  // longitude: null,
+  latitude: null,
+  longitutde: null,
+  accuracyCorrection: null,
+  bearingToCenter: null,
+  distanceToCenter: null,
+  landCoverType: null,
+  cropInformation: {
+    isCaptured: false,
+    waterSource: null,
+    cropIntensity: null,
+    primaryCrop: null,
+    secondaryCrop: null,
+    liveStock: null,
+    croppingPattern: null,
+    remarks: null,
+    additionalSeasons: [
+      {
+        name: null,
+        crop: null,
+      },
+    ],
+  },
+  CCE: {
+    isCaptured: false,
+    sampleSize: null,
+    grainWeight: null,
+    biomassWeight: null,
+    cultivar: null,
+    sowDate: null,
+    harvestDate: null,
+  },
+  images: [null], //null for typescript to infer a string type
+  locationDesc: null,
+}
 export const counterSlice = createSlice({
   name: 'dataform',
-  initialState: {
-    // latitude: null,
-    // longitude: null,
-    latitude: null,
-    longitutde: null,
-    accuracyCorrection: null,
-    bearingToCenter: null,
-    distanceToCenter: null,
-    landCoverType: null,
-    cropInformation: {
-      isCaptured: false,
-      waterSource: null,
-      cropIntensity: null,
-      primaryCrop: null,
-      secondaryCrop: null,
-      liveStock: null,
-      croppingPattern: null,
-      remarks: null,
-      additionalSeasons: [
-        {
-          name: null,
-          crop: null,
-        },
-      ],
-    },
-    CCE: {
-      isCaptured: false,
-      sampleSize: null,
-      grainWeight: null,
-      biomassWeight: null,
-      cultivar: null,
-      sowDate: null,
-      harvestDate: null,
-    },
-    images: [null], //null for typescript to infer a string type
-    locationDesc: null,
-  },
+  initialState: initialState,
   reducers: {
     setLocationData: function (state, action) {
       state.latitude = action.payload.latitude;
       state.longitutde = action.payload.longitude;
       state.accuracyCorrection = action.payload.accuracy;
     },
-    setBearingToCenter: function (state, action) {
+    setBearingToCenterData: function (state, action) {
       state.bearingToCenter = action.payload;
     },
-    setDistanceToCenter: function (state, action) {
+    setDistanceToCenterData: (state, action) => {
       state.distanceToCenter = action.payload;
     },
 
@@ -83,6 +85,9 @@ export const counterSlice = createSlice({
     setCroppingPattern: (state, action) => {
       state.cropInformation.croppingPattern = action.payload;
     },
+    setIsCapturedCCE: (state, action) => {
+      state.CCE.isCaptured = action.payload;
+    },
     //images section
     addImage: (state, action) => {
       state.images.push(action.payload);
@@ -93,6 +98,8 @@ export const counterSlice = createSlice({
         return true;
       });
     },
+    resetState: state => initialState,
+
   },
 });
 
@@ -103,11 +110,16 @@ export const {
   setCropIntensity,
   setPrimaryCrop,
   setSecondaryCrop,
+  setBearingToCenterData,
+  setDistanceToCenterData,
   setLiveStock,
   addImage,
+  setLocationData,
   removeImage,
   deleteSeason,
+  setIsCapturedCCE,
   addSeason,
+  resetState
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
@@ -119,3 +131,4 @@ export const selectImagesList = (state: any) => state.dataform.images;
 export const selectPrimaryCrop = (state: any) =>
   state.dataform.cropInformation.primaryCrop;
 export const selectAdditionalSeasons = (state:any) => state.dataform.cropInformation.additionalSeasons;
+export const selectDataCollection = (state:any) => state.dataform
