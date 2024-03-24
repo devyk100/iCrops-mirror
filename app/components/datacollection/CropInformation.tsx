@@ -10,6 +10,7 @@ import {
 import {useDispatch} from 'react-redux';
 import {
   setCropIntensity,
+  setCropRemarks,
   setCroppingPattern,
   setLandCoverType,
   setLiveStock,
@@ -162,7 +163,11 @@ export default function () {
             borderColor:"grey",
             borderRadius:10,
             marginTop:5
-          }}></TextInput>
+          }}
+          onChangeText={(value) => {
+            dispatch(setCropRemarks(value))
+          }}
+          ></TextInput>
         </View>
       </View>
     </>

@@ -1,6 +1,9 @@
 import { Text, TextInput, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { setLocationDescription } from "../../features/DataCollectionSlice";
 
 export default function(){
+  const dispatch = useDispatch()
     return (
         <View
             style={{
@@ -29,6 +32,9 @@ export default function(){
             fontSize:16,
             textAlignVertical:"top"
         }} multiline={true}
+        onChangeText={(value) => {
+            dispatch(setLocationDescription(value))
+        }}
         numberOfLines={3}
         >
 

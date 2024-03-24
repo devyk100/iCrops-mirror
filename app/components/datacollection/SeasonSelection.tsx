@@ -24,7 +24,7 @@ export default function(){
               flex: 6,
               // padding:5
             }}>
-            Primary Crop (Kharif Crop)
+            Season 1
           </Text>
             <CustomModal
             data={seasonData}
@@ -53,7 +53,7 @@ export default function(){
               flex: 6,
               // padding:5
             }}>
-            Secondary Crop (Rabi Season)
+            Season 2
           </Text>
 
             <CustomModal

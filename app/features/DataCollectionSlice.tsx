@@ -28,7 +28,10 @@ const initialState = {
   },
   CCE: {
     isCaptured: false,
-    sampleSize: null,
+    sampleSize: {
+      x: null,
+      y: null
+    },
     grainWeight: null,
     biomassWeight: null,
     cultivar: null,
@@ -89,6 +92,25 @@ export const counterSlice = createSlice({
     setIsCapturedCCE: (state, action) => {
       state.CCE.isCaptured = action.payload;
     },
+    setXSampleSize: (state, action) => {
+      console.log(action.payload)
+      state.CCE.sampleSize.x = action.payload
+    },
+    setYSampleSize: (state, action) => {
+      state.CCE.sampleSize.y = action.payload
+    },
+    setGrainWeight: (state, action) => {
+      state.CCE.grainWeight = action.payload;
+    },
+    setBiomassWeight: (state, action) => {
+      state.CCE.grainWeight = action.payload;
+    },
+    setLocationDescription: (state, action) => {
+      state.locationDesc = action.payload
+    },
+    setCropRemarks: (state, action) => {
+      state.cropInformation.remarks = action.payload
+    },
     //images section
     addImage: (state, action) => {
       state.images.push(action.payload);
@@ -113,6 +135,8 @@ export const {
   setSecondaryCrop,
   setBearingToCenterData,
   setDistanceToCenterData,
+  setXSampleSize,
+  setYSampleSize,
   setLiveStock,
   addImage,
   setLocationData,
@@ -120,7 +144,11 @@ export const {
   setPrimarySeason,
   setSecondarySeason,
   setIsCapturedCCE,
-  resetState
+  resetState,
+  setGrainWeight,
+  setBiomassWeight,
+  setCropRemarks,
+  setLocationDescription
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
@@ -131,3 +159,6 @@ export const selectWaterSourceType = (state: any) =>
 export const selectImagesList = (state: any) => state.dataform.images;
 export const selectAdditionalSeasons = (state:any) => state.dataform.cropInformation.additionalSeasons;
 export const selectDataCollection = (state:any) => state.dataform
+export const selectCCEData = (state:any) => state.dataform.CCE;
+export const selectPrimaryCrop = (state: any) => state.dataform.cropInformation.primarySeason.cropName;
+export const selectSecondaryCrop = (state: any) => state.dataform.cropInformation.secondarySeason.cropName;

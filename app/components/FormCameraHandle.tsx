@@ -20,6 +20,8 @@ import {
   selectDataCollection,
   selectImagesList,
   selectLandCoverType,
+  selectPrimaryCrop,
+  selectSecondaryCrop,
 } from '../features/DataCollectionSlice';
 import {ScrollView} from 'react-native-gesture-handler';
 import Marker, {
@@ -109,7 +111,8 @@ const requestCameraPermission = async () => {
 const imageProcessing = 
   async (
     imageUri: string,
-    cropDetails: any[],
+    primaryCrop: string,
+    secondaryCrop: string,
     latitude: number,
     longitude: number,
     username: string,
@@ -123,7 +126,7 @@ const imageProcessing =
     //   );
     //   return null;
     // }
-    console.log(cropDetails);
+    // console.log(cropDetails);
     
     if (!latitude) {
       Alert.alert(
@@ -133,11 +136,13 @@ const imageProcessing =
       return null;
     }
     console.log('inside of image processor');
-    let finalCropsNamesString = "";
-    for(let a of cropDetails){
-      finalCropsNamesString += `${a.name}:${a.crop}, `;
-    }
-    finalCropsNamesString = finalCropsNamesString.substring(0, finalCropsNamesString.length - 2);
+    // let finalCropsNamesString = "";
+    primaryCrop = primaryCrop.trim()
+    secondaryCrop = secondaryCrop.trim();
+    // for(let a of cropDetails){
+    //   finalCropsNamesString += `${a.name}:${a.crop}, `;
+    // }
+    // finalCropsNamesString = finalCropsNamesString.substring(0, finalCropsNamesString.length - 2);
 
     const options = {
       // background image
@@ -149,7 +154,7 @@ const imageProcessing =
         {
           text:
             (landType == "Cropland")
-              ? `Latitude: ${latitude} \nLatitude: ${longitude}\n${finalCropsNamesString}\n${new Date()}`
+              ? `Latitude: ${latitude} \nLatitude: ${longitude}\nSeason 1: ${primaryCrop}\nSeason 2: ${secondaryCrop}\n${new Date()}`
               : `Latitude: ${latitude} \nLatitude: ${longitude}\nLand Cover Type: ${landType}\n${new Date()}`,
           position: {
             position: Position.topLeft,
@@ -194,6 +199,8 @@ export default function () {
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const landCoverType = useSelector(selectLandCoverType);
   const wholeData = useSelector(selectDataCollection);
+  const primaryCrop = useSelector(selectPrimaryCrop)
+  const secondaryCrop = useSelector(selectSecondaryCrop)
   //retrieve the actual username from here
   const username = 'dummy';
   useEffect(() => {
@@ -207,27 +214,28 @@ export default function () {
     await requestCameraPermission();
     const result = await launchCamera({mediaType: 'photo'}, (res: any) => {
 
-      let cropDetails:Object[] = []
-      if(wholeData.landCoverType == "Cropland"){
-        console.log(wholeData)
-        cropDetails.push({
-          name: "Primary Crop",
-          crop: wholeData.cropInformation.primaryCrop
-        })
-        cropDetails.push({
-          name: "Secondary Crop",
-          crop: wholeData.cropInformation.secondaryCrop
-        })
-        cropDetails = [...cropDetails, ...(wholeData.cropInformation.additionalSeasons.filter((value: any) => {
-          if(value.name == null) return false;
-          return true;
-        }))];
-      }
+      // let cropDetails:Object[] = []
+      // if(wholeData.landCoverType == "Cropland"){
+      //   console.log(wholeData)
+      //   cropDetails.push({
+      //     name: "Primary Crop",
+      //     crop: wholeData.cropInformation.primaryCrop
+      //   })
+      //   cropDetails.push({
+      //     name: "Secondary Crop",
+      //     crop: wholeData.cropInformation.secondaryCrop
+      //   })
+      //   cropDetails = [...cropDetails, ...(wholeData.cropInformation.additionalSeasons.filter((value: any) => {
+      //     if(value.name == null) return false;
+      //     return true;
+      //   }))];
+      // }
       try {
         console.log(locationData);
         imageProcessing(
           res.assets[0].uri,
-          cropDetails,
+          primaryCrop,
+          secondaryCrop,
           locationData.latitude,
           locationData.longitude,
           username,

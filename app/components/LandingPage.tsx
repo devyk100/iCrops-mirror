@@ -12,9 +12,11 @@ import { useMMKVListener } from "react-native-mmkv";
 export default function HomeScreen({ navigation }: {
     navigation: any
   }) {
+
+    // at any saving of the  data, and not the initial one.
     useMMKVListener((key) => {
       const keys = storage.getAllKeys()
-      setUnsynced(storage.getNumber("counter"))
+      setUnsynced(storage.getNumber("counter") || 0)
       let obj = []
       for(let a of keys){
         obj.push(storage.getString(a));
@@ -26,9 +28,11 @@ export default function HomeScreen({ navigation }: {
     console.log(waterSource)
     const [data, setData] = useState<any>([])
     const [unsynced, setUnsynced] = useState<any>();
+
+    // at first mount
     useEffect(()=> {
       const keys = storage.getAllKeys()
-      setUnsynced(storage.getNumber("counter"))
+      setUnsynced(storage.getNumber("counter") || 0)
       let obj = []
       for(let a of keys){
         obj.push(storage.getString(a));

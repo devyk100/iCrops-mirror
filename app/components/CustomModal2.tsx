@@ -111,7 +111,7 @@ export default function ({
               </TouchableOpacity> */}
       <View
         style={{
-          marginHorizontal: 3,
+          // marginHorizontal: 3,
           flexDirection: 'column',
           alignItems: 'center',
           flex: 5

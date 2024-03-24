@@ -83,7 +83,7 @@ useEffect(() => {
         setCCECaptured(CCECondition);
     }
 
-    setPhotoCaptured(dataCollectionData.images?.length >= 4);
+    setPhotoCaptured(dataCollectionData.images?.length >= 2);
   }, [dataCollectionData]);
   const saveToLocalStorageHandler = useCallback(() => {
     saveToLocalStorage(dataCollectionData);
