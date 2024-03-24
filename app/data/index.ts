@@ -210,10 +210,14 @@ export const croppingPatternData = [
     },
     {
         value: 2,
-        title: "Mixed"
+        title: "Continuous / Monocropping"
     },
     {
         value: 3,
+        title: "Mixed"
+    },
+    {
+        value: 4,
         title: "Intercropping"
     }
 ]
@@ -222,18 +226,26 @@ export const croppingPatternData = [
 export const seasonData = [
     {
         value: 1,
-        title: "Summer/Dry/Zaid Season"
+        title: "Kharif Season"
     },
     {
         value: 2,
-        title: "Meher Season"
+        title: "Rabi Season"
     },
     {
         value: 3,
-        title: "Belg Season"
+        title: "Summer/Dry/Zaid Season"
     },
     {
         value: 4,
+        title: "Meher Season"
+    },
+    {
+        value: 5,
+        title: "Belg Season"
+    },
+    {
+        value: 6,
         title: "Aus Season"
     },
 ]

@@ -59,7 +59,6 @@ useEffect(() => {
     setLandCoverTypeCaptured(dataCollectionData.landCoverType != null);
     
     if (dataCollectionData.landCoverType == 'Cropland') {
-      let additionalSeasonsCondition = true;
       let cropLandCondition =
         dataCollectionData.cropInformation.isCaptured == true &&
         dataCollectionData.cropInformation.waterSource != null &&
@@ -69,15 +68,7 @@ useEffect(() => {
         dataCollectionData.cropInformation.liveStock != null &&
         dataCollectionData.cropInformation.croppingPattern != null;
       //checking the list of seasons
-
-      if (dataCollectionData.cropInformation.additionalSeasons.length > 1) {
-        for (let a of dataCollectionData.cropInformation.additionalSeasons) {
-          if (a.crop == null && a.name != null) {
-            additionalSeasonsCondition = false;
-          }
-        }
-      }
-      setCropInformationCaptured(cropLandCondition && additionalSeasonsCondition);
+      setCropInformationCaptured(cropLandCondition);
       console.log(cropInformationCaptured, "crop")
     }
 

@@ -14,17 +14,17 @@ const initialState = {
     isCaptured: false,
     waterSource: null,
     cropIntensity: null,
-    primaryCrop: null,
-    secondaryCrop: null,
+    primarySeason: {
+      seasonName: null,
+      cropName: null
+    },
+    secondarySeason: {
+      seasonName: null,
+      cropName: null
+    },
     liveStock: null,
     croppingPattern: null,
-    remarks: null,
-    additionalSeasons: [
-      {
-        name: null,
-        crop: null,
-      },
-    ],
+    remarks: null
   },
   CCE: {
     isCaptured: false,
@@ -63,27 +63,23 @@ export const counterSlice = createSlice({
     setCropIntensity: (state, action) => {
       state.cropInformation.cropIntensity = action.payload;
     },
+    setPrimarySeason: (state, action) => {
+      state.cropInformation.primarySeason.seasonName = action.payload;
+    },
+    setSecondarySeason: (state, action) => {
+      state.cropInformation.secondarySeason.seasonName = action.payload;
+    },
     setPrimaryCrop: (state, action) => {
       console.log('check');
-      state.cropInformation.primaryCrop = action.payload;
+      state.cropInformation.primarySeason.cropName = action.payload;
     },
     setSecondaryCrop: (state, action) => {
       console.log(action)
-      state.cropInformation.secondaryCrop = action.payload;
+      state.cropInformation.secondarySeason.cropName = action.payload;
     },
-    addSeason: (state, action) => {
-      state.cropInformation.additionalSeasons.push({
-        name: action.payload,
-        crop: null,
-      });
-    },
-    setCropForAdditionalSeason: (state, action) => {
-      console.log(state.cropInformation.additionalSeasons[action.payload.index])
-      state.cropInformation.additionalSeasons[action.payload.index].crop = action.payload.crop;
-    },
-    deleteSeason: (state, action) => {
-      state.cropInformation.additionalSeasons.splice(action.payload, 1);
-    },
+    // deleteSeason: (state, action) => {
+    //   state.cropInformation.additionalSeasons.splice(action.payload, 1);
+    // },
     setLiveStock: (state, action) => {
       state.cropInformation.liveStock = action.payload;
     },
@@ -121,10 +117,9 @@ export const {
   addImage,
   setLocationData,
   removeImage,
-  deleteSeason,
+  setPrimarySeason,
+  setSecondarySeason,
   setIsCapturedCCE,
-  addSeason,
-  setCropForAdditionalSeason,
   resetState
 } = counterSlice.actions;
 

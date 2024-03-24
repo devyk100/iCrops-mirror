@@ -17,7 +17,7 @@ import {
   setSecondaryCrop,
   setWaterSource,
 } from '../../features/DataCollectionSlice';
-import AdditionalSeasons from './AdditionalSeasons';
+import SeasonSelection from './SeasonSelection';
 
 export default function () {
   const dispatch = useDispatch();
@@ -98,55 +98,6 @@ export default function () {
               flex: 6,
               // padding:5
             }}>
-            Primary Crop (Kharif Crop)
-          </Text>
-
-          <CustomModal
-            data={cropsData}
-            action={payload => dispatch(setPrimaryCrop(payload))}></CustomModal>
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            //   width:"100%",
-            marginHorizontal: 25,
-            marginTop: 5,
-          }}>
-          <Text
-            style={{
-              color: 'black',
-              flex: 6,
-              // padding:5
-            }}>
-            Secondary Crop (Rabi Season)
-          </Text>
-
-          <CustomModal
-            data={cropsData}
-            action={payload =>{
-              dispatch(setSecondaryCrop(payload))
-              console.log(payload)
-            }
-            }></CustomModal>
-        </View>
-        <AdditionalSeasons/>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            //   width:"100%",
-            marginHorizontal: 25,
-            marginTop: 5,
-          }}>
-          <Text
-            style={{
-              color: 'black',
-              flex: 6,
-              // padding:5
-            }}>
             Live Stock
           </Text>
 
@@ -154,6 +105,9 @@ export default function () {
             data={livestockData}
             action={payload => dispatch(setLiveStock(payload))}></CustomModal>
         </View>
+
+            <SeasonSelection></SeasonSelection>
+
         <View
           style={{
             flexDirection: 'row',
