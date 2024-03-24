@@ -1,23 +1,29 @@
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import {Button, Text, TextInput, View} from 'react-native';
 import CustomDatePicker from '../CustomDatePicker';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectCCEData, setBiomassWeight, setGrainWeight, setXSampleSize, setYSampleSize } from '../../features/DataCollectionSlice';
-
-
-
-
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  selectCCEData,
+  setBiomassWeight,
+  setCCECaptured,
+  setCCEHarvestDate,
+  setCCESowDate,
+  setCultivar,
+  setGrainWeight,
+  setXSampleSize,
+  setYSampleSize,
+} from '../../features/DataCollectionSlice';
 
 export default function () {
   const [sowDate, setSowDate] = useState(new Date());
   const [harvestDate, setHarvestDate] = useState(new Date());
-  const dispatch = useDispatch()
-  const CCEData:{
+  const dispatch = useDispatch();
+  const CCEData: {
     isCaputred: boolean;
     sampleSize: {
       x: string;
       y: string;
-    },
+    };
     grainWeight: string;
     biomassWeight: string;
     cultivar: string;
@@ -26,6 +32,23 @@ export default function () {
   } = useSelector(selectCCEData);
   // being lazy in here, i am not propogating the changes in state indirectly, directly updating and fetching the redux state, i am sorry here.
   // if(CCEData == undefined) return null
+  useEffect(() => {
+    if (
+      (CCEData.sampleSize.x != null) &&
+      (CCEData.sampleSize.y != null) &&
+      (CCEData.grainWeight != null) &&
+      (CCEData.biomassWeight != null) &&
+      (CCEData.cultivar != null) &&
+      (CCEData.sowDate != null) &&
+      (CCEData.harvestDate != null)
+    ) {
+      if (CCEData.isCaputred != true) {
+        dispatch(setCCECaptured(true));
+      }
+    } else {
+      dispatch(setCCECaptured(false));
+    }
+  }, [CCEData]);
   return (
     <>
       <View
@@ -51,36 +74,34 @@ export default function () {
           autoFocus={true}
           inputMode="decimal"
           value={CCEData?.sampleSize.x}
-          onChangeText={(value) => {
-            dispatch(setXSampleSize(value))
+          onChangeText={value => {
+            dispatch(setXSampleSize(value));
           }}
           style={{
             backgroundColor: 'white',
             flex: 1,
             paddingHorizontal: 10,
-            color:"black",
+            color: 'black',
             marginHorizontal: 5,
             borderWidth: 1,
             borderColor: 'grey',
             borderRadius: 14,
           }}></TextInput>
-          <Text>
-           X
-          </Text>
+        <Text>X</Text>
         <TextInput
           allowFontScaling={true}
           blurOnSubmit={true}
-          // autoFocus={true} 
+          // autoFocus={true}
           inputMode="decimal"
           value={CCEData?.sampleSize.y}
-          onChangeText={(value) => {
-            dispatch(setYSampleSize(value))
+          onChangeText={value => {
+            dispatch(setYSampleSize(value));
           }}
           style={{
             backgroundColor: 'white',
             flex: 1,
             paddingHorizontal: 10,
-            color:"black",
+            color: 'black',
             marginHorizontal: 5,
             borderWidth: 1,
             borderColor: 'grey',
@@ -115,15 +136,14 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
-            color:"black",
+            color: 'black',
             borderColor: 'grey',
             borderRadius: 14,
           }}
           value={CCEData.grainWeight}
-          onChangeText={(value) => {
-            dispatch(setGrainWeight(value))
-          }}
-          ></TextInput>
+          onChangeText={value => {
+            dispatch(setGrainWeight(value));
+          }}></TextInput>
       </View>
       <View
         style={{
@@ -148,8 +168,8 @@ export default function () {
           blurOnSubmit={true}
           inputMode="decimal"
           value={CCEData.biomassWeight}
-          onChangeText={(value) => {
-            dispatch(setBiomassWeight(value))
+          onChangeText={value => {
+            dispatch(setBiomassWeight(value));
           }}
           style={{
             backgroundColor: 'white',
@@ -157,7 +177,7 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
-            color:"black",
+            color: 'black',
             borderColor: 'grey',
             borderRadius: 14,
           }}></TextInput>
@@ -189,9 +209,13 @@ export default function () {
             paddingHorizontal: 10,
             marginHorizontal: 5,
             borderWidth: 1,
-            color: "black",
+            color: 'black',
             borderColor: 'grey',
             borderRadius: 14,
+          }}
+          value={CCEData.cultivar}
+          onChangeText={value => {
+            dispatch(setCultivar(value));
           }}></TextInput>
       </View>
       <View
@@ -211,7 +235,14 @@ export default function () {
           }}>
           Sowing Date:
         </Text>
-        <CustomDatePicker date={sowDate} setDate={setSowDate}/>
+        <CustomDatePicker
+          date={sowDate}
+          setDate={(date: Date) => {
+            setSowDate(date);
+            //also dispatch the state here, it is important for the redux state to stay null at first thats why
+            dispatch(setCCESowDate(date.toString()));
+          }}
+        />
       </View>
       <View
         style={{
@@ -230,7 +261,13 @@ export default function () {
           }}>
           Harvest Date:
         </Text>
-        <CustomDatePicker date={harvestDate} setDate={setHarvestDate}/>
+        <CustomDatePicker
+          date={harvestDate}
+          setDate={(date: Date) => {
+            setHarvestDate(date);
+            dispatch(setCCEHarvestDate(date.toString()));
+          }}
+        />
       </View>
     </>
   );

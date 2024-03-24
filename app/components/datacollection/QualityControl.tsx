@@ -6,6 +6,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {
     resetState,
   selectDataCollection,
+  selectIsCCECaptured,
+  selectIsCCEGoingToBeCaptured,
   setLandCoverType,
   setLocationData,
 } from '../../features/DataCollectionSlice';
@@ -41,7 +43,9 @@ export default function ({navigation, rerender} : {navigation: any;
     useState(false);
   const [landCoverTypeCaptured, setLandCoverTypeCaptured] = useState(false);
   const [cropInformationCaptured, setCropInformationCaptured] = useState(false);
-  const [CCECaptured, setCCECaptured] = useState(false);
+  const CCECaptured = useSelector(selectIsCCECaptured)
+  const CCEGonnaBeCaptured = useSelector(selectIsCCEGoingToBeCaptured)
+  // const [CCECaptured, setCCECaptured] = useState(false);
   const locationData = useSelector(selectLocation);
 const dispatch = useDispatch();
 useEffect(() => {
@@ -59,6 +63,7 @@ useEffect(() => {
     setLandCoverTypeCaptured(dataCollectionData.landCoverType != null);
     
     if (dataCollectionData.landCoverType == 'Cropland') {
+      let additionalSeasonsCondition = true;
       let cropLandCondition =
         dataCollectionData.cropInformation.isCaptured == true &&
         dataCollectionData.cropInformation.waterSource != null &&
@@ -68,22 +73,30 @@ useEffect(() => {
         dataCollectionData.cropInformation.liveStock != null &&
         dataCollectionData.cropInformation.croppingPattern != null;
       //checking the list of seasons
-      setCropInformationCaptured(cropLandCondition);
+
+      if (dataCollectionData.cropInformation.additionalSeasons.length > 1) {
+        for (let a of dataCollectionData.cropInformation.additionalSeasons) {
+          if (a.crop == null && a.name != null) {
+            additionalSeasonsCondition = false;
+          }
+        }
+      }
+      setCropInformationCaptured(cropLandCondition && additionalSeasonsCondition);
       console.log(cropInformationCaptured, "crop")
     }
 
-    if (dataCollectionData.CCE.isCaptured == true) {
-      let CCECondition =
-        dataCollectionData.CCE.sampleSize != null &&
-        dataCollectionData.CCE.grainWeight != null &&
-        dataCollectionData.CCE.biomassWeight != null &&
-        dataCollectionData.CCE.cultivar != null &&
-        dataCollectionData.CCE.sowDate != null &&
-        dataCollectionData.CCE.harvestDate != null;
-        setCCECaptured(CCECondition);
-    }
+    // if (dataCollectionData.CCE.isCaptured == true) {
+    //   let CCECondition =
+    //     dataCollectionData.CCE.sampleSize != null &&
+    //     dataCollectionData.CCE.grainWeight != null &&
+    //     dataCollectionData.CCE.biomassWeight != null &&
+    //     dataCollectionData.CCE.cultivar != null &&
+    //     dataCollectionData.CCE.sowDate != null &&
+    //     dataCollectionData.CCE.harvestDate != null;
+    //     setCCECaptured(CCECondition);
+    // }
 
-    setPhotoCaptured(dataCollectionData.images?.length >= 2);
+    setPhotoCaptured(dataCollectionData.images?.length >= 4);
   }, [dataCollectionData]);
   const saveToLocalStorageHandler = useCallback(() => {
     saveToLocalStorage(dataCollectionData);
@@ -198,7 +211,7 @@ useEffect(() => {
           <CorrectWrongIcon isCorrect={cropInformationCaptured} />
         </View>
       ) : null}
-      {dataCollectionData.CCE.isCaptured == true ? (
+      {CCEGonnaBeCaptured == true ? (
         <View
           style={{
             flexDirection: 'row',

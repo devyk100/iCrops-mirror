@@ -28,6 +28,7 @@ const initialState = {
   },
   CCE: {
     isCaptured: false,
+    isGoingToBeCaptured:false,
     sampleSize: {
       x: null,
       y: null
@@ -90,7 +91,7 @@ export const counterSlice = createSlice({
       state.cropInformation.croppingPattern = action.payload;
     },
     setIsCapturedCCE: (state, action) => {
-      state.CCE.isCaptured = action.payload;
+      state.CCE.isGoingToBeCaptured = action.payload;
     },
     setXSampleSize: (state, action) => {
       console.log(action.payload)
@@ -103,7 +104,7 @@ export const counterSlice = createSlice({
       state.CCE.grainWeight = action.payload;
     },
     setBiomassWeight: (state, action) => {
-      state.CCE.grainWeight = action.payload;
+      state.CCE.biomassWeight = action.payload;
     },
     setLocationDescription: (state, action) => {
       state.locationDesc = action.payload
@@ -120,6 +121,20 @@ export const counterSlice = createSlice({
         if (value == action.payload) return;
         return true;
       });
+    },
+    setCCECaptured: (state, action) => {
+      console.log(action.payload)
+      state.CCE.isCaptured = action.payload
+    },
+    setCCESowDate: (state, action) => {
+      console.log("yep")
+      state.CCE.sowDate = action.payload
+    },
+    setCCEHarvestDate: (state, action) => {
+      state.CCE.harvestDate = action.payload
+    },
+    setCultivar: (state, action) => {
+      state.CCE.cultivar = action.payload;
     },
     resetState: state => initialState,
 
@@ -144,11 +159,15 @@ export const {
   setPrimarySeason,
   setSecondarySeason,
   setIsCapturedCCE,
+  setCCESowDate,
+  setCCEHarvestDate,
   resetState,
   setGrainWeight,
+  setCCECaptured,
   setBiomassWeight,
   setCropRemarks,
-  setLocationDescription
+  setLocationDescription,
+  setCultivar
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
@@ -162,3 +181,5 @@ export const selectDataCollection = (state:any) => state.dataform
 export const selectCCEData = (state:any) => state.dataform.CCE;
 export const selectPrimaryCrop = (state: any) => state.dataform.cropInformation.primarySeason.cropName;
 export const selectSecondaryCrop = (state: any) => state.dataform.cropInformation.secondarySeason.cropName;
+export const selectIsCCECaptured = (state: any) => state.dataform.CCE.isCaptured
+export const selectIsCCEGoingToBeCaptured = (state: any) => state.dataform.CCE.isGoingToBeCaptured
