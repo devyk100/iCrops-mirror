@@ -226,26 +226,30 @@ export const croppingPatternData = [
 export const seasonData = [
     {
         value: 1,
-        title: "Kharif Season"
+        title: "Unknown"
     },
     {
         value: 2,
-        title: "Rabi Season"
+        title: "Kharif Season"
     },
     {
         value: 3,
-        title: "Summer/Dry/Zaid Season"
+        title: "Rabi Season"
     },
     {
         value: 4,
-        title: "Meher Season"
+        title: "Summer/Dry/Zaid Season"
     },
     {
         value: 5,
-        title: "Belg Season"
+        title: "Meher Season"
     },
     {
         value: 6,
+        title: "Belg Season"
+    },
+    {
+        value: 7,
         title: "Aus Season"
     },
 ]

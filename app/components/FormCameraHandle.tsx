@@ -108,90 +108,83 @@ const requestCameraPermission = async () => {
   }
 };
 
-const imageProcessing = 
-  async (
-    imageUri: string,
-    primaryCrop: string,
-    secondaryCrop: string,
-    latitude: number,
-    longitude: number,
-    username: string,
-    landType: string,
-    completedTask: (newUri: string) => void,
-  ) => {
-    // if (!cropName || cropName == '') {
-    //   Alert.alert(
-    //     'Enter the crop name',
-    //     "Type 0 to confirm if there's no crop to put in the field",
-    //   );
-    //   return null;
-    // }
-    // console.log(cropDetails);
-    
-    if (!latitude) {
-      Alert.alert(
-        "The location wasn't set, please set it.",
-        'Set the location',
-      );
-      return null;
-    }
-    console.log('inside of image processor');
-    // let finalCropsNamesString = "";
-    primaryCrop = primaryCrop.trim()
+const imageProcessing = async (
+  imageUri: string,
+  primaryCrop: string,
+  secondaryCrop: string,
+  latitude: number,
+  longitude: number,
+  username: string,
+  landType: string,
+  completedTask: (newUri: string) => void,
+) => {
+  // if (!cropName || cropName == '') {
+  //   Alert.alert(
+  //     'Enter the crop name',
+  //     "Type 0 to confirm if there's no crop to put in the field",
+  //   );
+  //   return null;
+  // }
+  // console.log(cropDetails);
+  console.log('inside of image processor');
+  // let finalCropsNamesString = "";
+  if (landType == 'Cropland') {
+    primaryCrop = primaryCrop.trim();
     secondaryCrop = secondaryCrop.trim();
-    // for(let a of cropDetails){
-    //   finalCropsNamesString += `${a.name}:${a.crop}, `;
-    // }
-    // finalCropsNamesString = finalCropsNamesString.substring(0, finalCropsNamesString.length - 2);
+  }
+  // for(let a of cropDetails){
+  //   finalCropsNamesString += `${a.name}:${a.crop}, `;
+  // }
+  // finalCropsNamesString = finalCropsNamesString.substring(0, finalCropsNamesString.length - 2);
 
-    const options = {
-      // background image
-      backgroundImage: {
-        src: {uri: imageUri},
-        scale: 1,
-      },
-      watermarkTexts: [
-        {
-          text:
-            (landType == "Cropland")
-              ? `Latitude: ${latitude} \nLatitude: ${longitude}\nSeason 1: ${primaryCrop}\nSeason 2: ${secondaryCrop}\n${new Date()}`
-              : `Latitude: ${latitude} \nLatitude: ${longitude}\nLand Cover Type: ${landType}\n${new Date()}`,
-          position: {
-            position: Position.topLeft,
+  const options = {
+    // background image
+    backgroundImage: {
+      src: {uri: imageUri},
+      scale: 1,
+    },
+    watermarkTexts: [
+      {
+        text:
+          landType == 'Cropland'
+            ? `Latitude: ${latitude} \nLatitude: ${longitude}\nSeason 1: ${primaryCrop}\nSeason 2: ${secondaryCrop}\n${new Date()}`
+            : `Latitude: ${latitude} \nLatitude: ${longitude}\nLand Cover Type: ${landType}\n${new Date()}`,
+        position: {
+          position: Position.topLeft,
+        },
+        style: {
+          color: '#ffffff',
+          fontSize: 30,
+          fontName: 'Arial',
+          shadowStyle: {
+            dx: 0,
+            dy: 0,
+            radius: 15,
+            color: '#000000',
           },
-          style: {
-            color: '#ffffff',
-            fontSize: 30,
-            fontName: 'Arial',
-            shadowStyle: {
-              dx: 0,
-              dy: 0,
-              radius: 15,
-              color: '#000000',
-            },
-            textBackgroundStyle: {
-              padding: '0% 1%',
-              type: TextBackgroundType.none,
-              color: '#000000',
-            },
+          textBackgroundStyle: {
+            padding: '0% 1%',
+            type: TextBackgroundType.none,
+            color: '#000000',
           },
         },
-      ],
-      scale: 1,
-      quality: 100,
-      filename:`${username}-${landType}-${new Date}`,
-      saveFormat: ImageFormat.png,
-    };
-    const permimssionPass = await hasAndroidPermission();
-    console.log(permimssionPass);
-    const path = await Marker.markText(options);
-    const resUri = 'file:' + path;
-    const newUri = await CameraRoll.saveAsset(resUri, {
-      type: 'auto',
-      album: 'geotagged photos',
-    });
-    completedTask(newUri.node.image.uri);
-  }
+      },
+    ],
+    scale: 1,
+    quality: 100,
+    filename: `${username}-${landType}-${new Date()}`,
+    saveFormat: ImageFormat.png,
+  };
+  const permimssionPass = await hasAndroidPermission();
+  console.log(permimssionPass);
+  const path = await Marker.markText(options);
+  const resUri = 'file:' + path;
+  const newUri = await CameraRoll.saveAsset(resUri, {
+    type: 'auto',
+    album: 'geotagged photos',
+  });
+  completedTask(newUri.node.image.uri);
+};
 export default function () {
   const imageList = useSelector(selectImagesList);
   const dispatch = useDispatch();
@@ -199,21 +192,37 @@ export default function () {
   const [isProcessingImage, setIsProcessingImage] = useState(false);
   const landCoverType = useSelector(selectLandCoverType);
   const wholeData = useSelector(selectDataCollection);
-  const primaryCrop = useSelector(selectPrimaryCrop)
-  const secondaryCrop = useSelector(selectSecondaryCrop)
+  const primaryCrop = useSelector(selectPrimaryCrop);
+  const secondaryCrop = useSelector(selectSecondaryCrop);
   //retrieve the actual username from here
   const username = 'dummy';
   useEffect(() => {
-    console.log(locationData)
+    console.log(locationData);
   }, [locationData, username, landCoverType]);
   const openCamera = useCallback(async () => {
-    if(!locationData.latitude || !landCoverType){
-      Alert.alert("Fill the previous fields of location beforehand", "Make sure you've filled land cover type, crop name(if applicable), and you've captured the location.");
+    if (!locationData.latitude || !landCoverType) {
+      Alert.alert(
+        'Fill the previous fields of location beforehand',
+        "Make sure you've filled land cover type, crop name(if applicable), and you've captured the location.",
+      );
       return;
     }
     await requestCameraPermission();
+    if (
+      landCoverType == 'Cropland' &&
+      (primaryCrop == null || secondaryCrop == null)
+    ) {
+      Alert.alert("the crops weren't set");
+      return null;
+    }
+    if (!locationData.latitude) {
+      Alert.alert(
+        "The location wasn't set, please set it.",
+        'Set the location',
+      );
+      return null;
+    }
     const result = await launchCamera({mediaType: 'photo'}, (res: any) => {
-
       // let cropDetails:Object[] = []
       // if(wholeData.landCoverType == "Cropland"){
       //   console.log(wholeData)
@@ -232,6 +241,7 @@ export default function () {
       // }
       try {
         console.log(locationData);
+
         imageProcessing(
           res.assets[0].uri,
           primaryCrop,
@@ -313,7 +323,7 @@ export default function () {
             // marginVertical: 10,
             alignItems: 'center',
             justifyContent: 'center',
-            paddingTop: 7
+            paddingTop: 7,
           }}>
           {/* <TouchableOpacity
             onPress={() => {

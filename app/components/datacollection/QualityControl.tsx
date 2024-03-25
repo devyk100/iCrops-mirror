@@ -1,4 +1,4 @@
-import {Button, Image, Text, View} from 'react-native';
+import {Alert, Button, Image, Text, View} from 'react-native';
 import {saveToLocalStorage, storage} from '../../localStorage';
 import store from '../../store';
 import {useCallback, useEffect, useState} from 'react';
@@ -44,10 +44,32 @@ export default function ({navigation, rerender} : {navigation: any;
   const [landCoverTypeCaptured, setLandCoverTypeCaptured] = useState(false);
   const [cropInformationCaptured, setCropInformationCaptured] = useState(false);
   const CCECaptured = useSelector(selectIsCCECaptured)
+
   const CCEGonnaBeCaptured = useSelector(selectIsCCEGoingToBeCaptured)
   // const [CCECaptured, setCCECaptured] = useState(false);
   const locationData = useSelector(selectLocation);
 const dispatch = useDispatch();
+
+useEffect(() => {
+    if(CCEGonnaBeCaptured){
+      if(dataCollectionData.landCoverType == "Cropland"){
+        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured && CCECaptured && cropInformationCaptured)
+      }
+      else{
+        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured &&  CCECaptured);
+      }
+    }
+    else{
+      if(dataCollectionData.landCoverType == "Cropland"){
+        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured && cropInformationCaptured)
+      }
+      else{
+        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured);
+      }
+
+    }
+}, [bearingToCenterCaptured, locationCaptured, distanceToCenterCaptured, landCoverTypeCaptured, cropInformationCaptured, CCECaptured, CCEGonnaBeCaptured, dataCollectionData])
+
 useEffect(() => {
     dispatch(setLocationData(locationData));
 }, [locationData])
@@ -63,40 +85,19 @@ useEffect(() => {
     setLandCoverTypeCaptured(dataCollectionData.landCoverType != null);
     
     if (dataCollectionData.landCoverType == 'Cropland') {
-      let additionalSeasonsCondition = true;
       let cropLandCondition =
-        dataCollectionData.cropInformation.isCaptured == true &&
+        // dataCollectionData.cropInformation.isCaptured == true && // set this sometime
         dataCollectionData.cropInformation.waterSource != null &&
         dataCollectionData.cropInformation.cropIntensity != null &&
-        dataCollectionData.cropInformation.primaryCrop != null &&
-        dataCollectionData.cropInformation.secondaryCrop != null &&
+        dataCollectionData.cropInformation.primarySeason.cropName != null &&
+        dataCollectionData.cropInformation.secondarySeason.cropName != null &&
         dataCollectionData.cropInformation.liveStock != null &&
         dataCollectionData.cropInformation.croppingPattern != null;
-      //checking the list of seasons
-
-      if (dataCollectionData.cropInformation.additionalSeasons.length > 1) {
-        for (let a of dataCollectionData.cropInformation.additionalSeasons) {
-          if (a.crop == null && a.name != null) {
-            additionalSeasonsCondition = false;
-          }
-        }
-      }
-      setCropInformationCaptured(cropLandCondition && additionalSeasonsCondition);
-      console.log(cropInformationCaptured, "crop")
+      setCropInformationCaptured(cropLandCondition);
+      console.log(cropLandCondition, "crop")
     }
 
-    // if (dataCollectionData.CCE.isCaptured == true) {
-    //   let CCECondition =
-    //     dataCollectionData.CCE.sampleSize != null &&
-    //     dataCollectionData.CCE.grainWeight != null &&
-    //     dataCollectionData.CCE.biomassWeight != null &&
-    //     dataCollectionData.CCE.cultivar != null &&
-    //     dataCollectionData.CCE.sowDate != null &&
-    //     dataCollectionData.CCE.harvestDate != null;
-    //     setCCECaptured(CCECondition);
-    // }
-
-    setPhotoCaptured(dataCollectionData.images?.length >= 4);
+    setPhotoCaptured(dataCollectionData.images?.length >= 2);
   }, [dataCollectionData]);
   const saveToLocalStorageHandler = useCallback(() => {
     saveToLocalStorage(dataCollectionData);
@@ -239,10 +240,15 @@ useEffect(() => {
           margin:5
         }}>
         <Button title="submit" onPress={() => {
+          if(isSavable){
             saveToLocalStorageHandler()
             dispatch(resetState());
             rerender()
             navigation.goBack();
+          }
+          else{
+            Alert.alert("Make sure you have filled the entries properly", "Make sure to fill all the important fields before saving")
+          }
         }}></Button>
       </View>
       <View
