@@ -253,3 +253,23 @@ export const seasonData = [
         title: "Aus"
     },
 ]
+
+
+export const cropGrowthStageData = [
+    {
+        value: 1,
+        title: "Unknown"
+    },
+    {
+        value: 2,
+        title: 'Vegetative'
+    },
+    {
+        value: 3,
+        title: "Flowering"
+    },
+    {
+        value: 4,
+        title: "Harvesting"
+    }
+]

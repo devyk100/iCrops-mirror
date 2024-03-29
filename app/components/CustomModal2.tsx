@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -9,6 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+import { selectResetter } from '../features/LocationSlice';
 
 type dataType = {
   value: number;
@@ -24,6 +26,11 @@ export default function ({
 }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalValue, setModalValue] = useState(1);
+  const resetterValue = useSelector(selectResetter);
+    useEffect(() => {
+      setModalValue(1)
+      console.log(resetterValue)
+    }, [resetterValue])
   return (
     <>
       <Modal

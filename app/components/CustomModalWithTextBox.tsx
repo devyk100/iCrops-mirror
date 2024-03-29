@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {
   Alert,
   Button,
@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+import { selectResetter } from '../features/LocationSlice';
 
 type dataType = {
   value: number;
@@ -27,6 +29,11 @@ export default function ({
   const [modalValue, setModalValue] = useState(1);
   const [newCropToBeAdded, setNewCropToBeAdded] = useState(false);
   const [newCropValue, setNewCropValue] = useState<string>('');
+  const resetterValue = useSelector(selectResetter);
+    useEffect(() => {
+      setModalValue(1)
+      console.log(resetterValue)
+    }, [resetterValue])
   return (
     <>
       <Modal
@@ -82,6 +89,7 @@ export default function ({
                       borderBottomWidth: 1,
                       borderBottomColor: 'green',
                       flex: 3,
+                      color: "blue"
                     }}
                     value={newCropValue}
                     onChangeText={setNewCropValue}></TextInput>

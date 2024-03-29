@@ -16,7 +16,12 @@ import {
 import CorrectIcon from './../../assets/correct-icon.png';
 // @ts-ignore
 import WrongIcon from './../../assets/wrong-icon.png';
-import {selectLocation} from '../../features/LocationSlice';
+import {
+  reset,
+  resetLocation,
+  selectLocation,
+} from '../../features/LocationSlice';
+import { calculateExactLocation } from '../../location/getLocation';
 function CorrectWrongIcon({
   isCorrect,
 }: {
@@ -162,7 +167,19 @@ export default function ({
     setPhotoCaptured(dataCollectionData.images?.length >= 2);
   }, [dataCollectionData]);
   const saveToLocalStorageHandler = useCallback(() => {
-    saveToLocalStorage(dataCollectionData);
+    console.log(dataCollectionData.longitude, 'ooogitutde')
+    const {latitude, longitude} = calculateExactLocation(
+      dataCollectionData.latitude,
+      dataCollectionData.longitude,
+      dataCollectionData.distanceToCenter,
+      dataCollectionData.bearingToCenter,
+    );
+    const finalDataCollectionData = {
+      ...dataCollectionData,
+      latitude: latitude,
+      longitude: longitude,
+    };
+    saveToLocalStorage(finalDataCollectionData);
   }, [dataCollectionData]);
 
   return (
@@ -184,7 +201,7 @@ export default function ({
         </Text>
         <CorrectWrongIcon isCorrect={photoCaptured} />
       </View>
-      {capturedFromMap ==  false ? (
+      {capturedFromMap == false ? (
         <>
           <View
             style={{
@@ -309,11 +326,13 @@ export default function ({
           onPress={() => {
             if (isSavable) {
               saveToLocalStorageHandler();
-              dispatch(resetState());
               scrollRef.current?.scrollTo({
                 y: 0,
                 animated: true,
               });
+              dispatch(resetState());
+              dispatch(reset());
+              dispatch(resetLocation());
               navigation.goBack();
             } else {
               Alert.alert(

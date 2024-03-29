@@ -1,6 +1,7 @@
 import {Text, TextInput, View} from 'react-native';
 import CustomModal from '../CustomModal';
 import {
+  cropGrowthStageData,
   cropIntensityData,
   croppingPatternData,
   cropsData,
@@ -9,6 +10,7 @@ import {
 } from '../../data';
 import {useDispatch} from 'react-redux';
 import {
+  setCropGrowthStage,
   setCropIntensity,
   setCropRemarks,
   setCroppingPattern,
@@ -131,6 +133,30 @@ export default function () {
             data={croppingPatternData}
             action={payload =>
               dispatch(setCroppingPattern(payload))
+            }></CustomModal>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            //   width:"100%",
+            marginHorizontal: 25,
+            marginTop: 5,
+          }}>
+          <Text
+            style={{
+              color: 'black',
+              flex: 6,
+              // padding:5
+            }}>
+            Crop Growth Stage
+          </Text>
+
+          <CustomModal
+            data={cropGrowthStageData}
+            action={payload =>
+              dispatch(setCropGrowthStage(payload))
             }></CustomModal>
         </View>
 

@@ -58,3 +58,31 @@ export function getImageLocation() {
   );
   return position;
 }
+
+
+export function calculateExactLocation(lat: number, lon: number, distance: number, bearing: number): { latitude: number, longitude: number } {
+  const dist: number = distance / 6371000.0;
+  const brng: number = (bearing * Math.PI) / 180;
+  const lat1: number = (lat * Math.PI) / 180;
+  const lon1: number = (lon * Math.PI) / 180;
+
+  let exactLat: number = Math.asin(Math.sin(lat1) * Math.cos(dist) +
+      Math.cos(lat1) * Math.sin(dist) * Math.cos(brng));
+
+  let a: number;
+  let denominator: number = Math.cos(dist) - Math.sin(lat1) * Math.sin(exactLat);
+  if (Math.abs(denominator) < Number.EPSILON) {
+      a = 0;
+  } else {
+      a = Math.atan2(Math.sin(brng) * Math.sin(dist) * Math.cos(lat1), denominator);
+  }
+
+  let exactLon: number = lon1 + a;
+  exactLon = ((exactLon + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+
+  // Convert back to degrees
+  exactLat = (exactLat * 180) / Math.PI;
+  exactLon = (exactLon * 180) / Math.PI;
+
+  return { latitude: exactLat, longitude: exactLon };
+}

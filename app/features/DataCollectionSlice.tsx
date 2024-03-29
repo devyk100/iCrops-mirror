@@ -6,7 +6,7 @@ const initialState = {
   // longitude: null,
   capturedFromMaps: false,
   latitude: null,
-  longitutde: null,
+  longitude: null,
   accuracyCorrection: null,
   bearingToCenter: null,
   distanceToCenter: null,
@@ -25,6 +25,7 @@ const initialState = {
     },
     liveStock: null,
     croppingPattern: null,
+    cropGrowthStage: null,
     remarks: null
   },
   CCE: {
@@ -54,7 +55,7 @@ export const counterSlice = createSlice({
     },
     setLocationData: function (state, action) {
       state.latitude = action.payload.latitude;
-      state.longitutde = action.payload.longitude;
+      state.longitude = action.payload.longitude;
       state.accuracyCorrection = action.payload.accuracy;
     },
     setBearingToCenterData: function (state, action) {
@@ -142,6 +143,9 @@ export const counterSlice = createSlice({
     setCultivar: (state, action) => {
       state.CCE.cultivar = action.payload;
     },
+    setCropGrowthStage: (state, action) => {
+      state.cropInformation.cropGrowthStage = action.payload;
+    },
     resetState: state => initialState,
 
   },
@@ -168,6 +172,7 @@ export const {
   setCCESowDate,
   setCCEHarvestDate,
   resetState,
+  setCropGrowthStage,
   setGrainWeight,
   setCCECaptured,
   setCapturedFromMap,
@@ -191,3 +196,6 @@ export const selectPrimaryCrop = (state: any) => state.dataform.cropInformation.
 export const selectSecondaryCrop = (state: any) => state.dataform.cropInformation.secondarySeason.cropName;
 export const selectIsCCECaptured = (state: any) => state.dataform.CCE.isCaptured
 export const selectIsCCEGoingToBeCaptured = (state: any) => state.dataform.CCE.isGoingToBeCaptured
+export const selectBearingToCenter = (state: any) => state.dataform.bearingToCenter
+export const selectDistanceToCenter = (state: any) => state.dataform.distanceToCenter
+export const selectCropGrowthStage = (state: any) => state.dataform.cropInformation.cropGrowthStage

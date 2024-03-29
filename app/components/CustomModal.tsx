@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, Button, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
+import { selectResetter } from "../features/LocationSlice";
 
 type dataType = {
     value: number;
@@ -12,8 +14,16 @@ export default function ({data, action} : {
 }){
     const [modalVisible, setModalVisible] = useState(false);
     const [modalValue, setModalValue] = useState(1);
+    const resetterValue = useSelector(selectResetter);
+    useEffect(() => {
+      setModalValue(1)
+      console.log(resetterValue)
+    }, [resetterValue])
     return (
         <>
+        {
+          resetterValue? null: null
+        }
          <Modal
                 animationType="slide"
                 transparent={true}

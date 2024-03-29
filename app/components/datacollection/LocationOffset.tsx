@@ -4,7 +4,7 @@ import { Button, Text, ToastAndroid, TouchableOpacity, View } from "react-native
 // @ts-ignore
 import CompassHeading from 'react-native-compass-heading';
 import { useDispatch, useSelector } from "react-redux";
-import { selectDegreesToNorth, setDegreesToNorth } from "../../features/LocationSlice";
+import { selectDegreesToNorth, selectResetter, setDegreesToNorth } from "../../features/LocationSlice";
 import { hell, storage } from "../../localStorage";
 import { selectCapturedFromMap, setBearingToCenterData, setDistanceToCenterData } from "../../features/DataCollectionSlice";
 export default function(){
@@ -13,6 +13,12 @@ export default function(){
 
   const [bearingToCenter, setBearingToCenter] = useState<number | null>(null);
   // const [degreesToNorth, setDegreesToNorth] = useState(0);
+  const resetterValue = useSelector(selectResetter);
+  useEffect(() => {
+    setDistanceToCenter(70)
+    setBearingToCenter(null)
+    console.log(resetterValue)
+  }, [resetterValue])
   const degreesToNorth = useSelector(selectDegreesToNorth)
   const capturedFromMap = useSelector(selectCapturedFromMap);
   const showToastWithGravityAndOffset = () => {
