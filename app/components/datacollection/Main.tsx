@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Button from '../Button';
-import {useCallback, useState} from 'react';
+import {useCallback, useRef, useState} from 'react';
 import {Slider} from '@miblanchard/react-native-slider';
 import CustomModal from '../CustomModal';
 import {
@@ -38,11 +38,11 @@ export default function ({navigation}: {navigation: any}) {
   const locationData = useSelector(selectLocation);
   const [isCaptureCCE, setIsCaptureCCE] = useState(false);
   const dispatch = useDispatch();
-  const [dummy, setDummy] = useState(0);
+  const scrollRef = useRef(null);
   const landCoverType = useSelector(selectLandCoverType);
   return (
     <>
-      <ScrollView>
+      <ScrollView ref={scrollRef}>
         <View
           style={{
             marginTop: 5,
@@ -166,9 +166,8 @@ export default function ({navigation}: {navigation: any}) {
               Quality Control
             </Text>
           </View>
-          <QualityControl navigation={navigation} rerender={() => setDummy(Math.random())}></QualityControl>
+          <QualityControl navigation={navigation} scrollRef={scrollRef}></QualityControl>
         </View>
-        {dummy? null:null}
       </ScrollView>
     </>
   );

@@ -4,6 +4,7 @@ import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 const initialState = {
   // latitude: null,
   // longitude: null,
+  capturedFromMaps: false,
   latitude: null,
   longitutde: null,
   accuracyCorrection: null,
@@ -46,6 +47,11 @@ export const counterSlice = createSlice({
   name: 'dataform',
   initialState: initialState,
   reducers: {
+    setCapturedFromMap: (state, action) => {
+      state.capturedFromMaps = action.payload;
+      console.log(action);
+      
+    },
     setLocationData: function (state, action) {
       state.latitude = action.payload.latitude;
       state.longitutde = action.payload.longitude;
@@ -164,6 +170,7 @@ export const {
   resetState,
   setGrainWeight,
   setCCECaptured,
+  setCapturedFromMap,
   setBiomassWeight,
   setCropRemarks,
   setLocationDescription,
@@ -172,6 +179,7 @@ export const {
 
 export default counterSlice.reducer;
 
+export const selectCapturedFromMap = (state: any) => state.dataform.capturedFromMaps;
 export const selectLandCoverType = (state: any) => state.dataform.landCoverType;
 export const selectWaterSourceType = (state: any) =>
   state.dataform.cropInformation.waterSource;

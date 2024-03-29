@@ -49,7 +49,7 @@ const MapChooser = ({
     latitudeDelta: 0.0015,
     longitudeDelta: 0.0015,
   });
-  const [mapType, setMapType] = useState<MapType>('standard');
+  const [mapType, setMapType] = useState<MapType>('satellite');
   const [mapCoordinates, setMapCoordinates] = useState<LatLng>({
     latitude: region.latitude,
     longitude: region.longitude,

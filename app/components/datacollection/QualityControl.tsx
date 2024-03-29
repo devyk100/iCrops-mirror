@@ -4,7 +4,8 @@ import store from '../../store';
 import {useCallback, useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {
-    resetState,
+  resetState,
+  selectCapturedFromMap,
   selectDataCollection,
   selectIsCCECaptured,
   selectIsCCEGoingToBeCaptured,
@@ -15,7 +16,7 @@ import {
 import CorrectIcon from './../../assets/correct-icon.png';
 // @ts-ignore
 import WrongIcon from './../../assets/wrong-icon.png';
-import { selectLocation } from '../../features/LocationSlice';
+import {selectLocation} from '../../features/LocationSlice';
 function CorrectWrongIcon({
   isCorrect,
 }: {
@@ -31,8 +32,12 @@ function CorrectWrongIcon({
     />
   );
 }
-export default function ({navigation, rerender} : {navigation: any;
-    rerender: ()=>void
+export default function ({
+  navigation,
+  scrollRef,
+}: {
+  navigation: any;
+  scrollRef: any;
 }) {
   const dataCollectionData = useSelector(selectDataCollection);
   const [isSavable, setIsSavable] = useState(false);
@@ -43,47 +48,104 @@ export default function ({navigation, rerender} : {navigation: any;
     useState(false);
   const [landCoverTypeCaptured, setLandCoverTypeCaptured] = useState(false);
   const [cropInformationCaptured, setCropInformationCaptured] = useState(false);
-  const CCECaptured = useSelector(selectIsCCECaptured)
-
-  const CCEGonnaBeCaptured = useSelector(selectIsCCEGoingToBeCaptured)
+  const CCECaptured = useSelector(selectIsCCECaptured);
+  const capturedFromMap = useSelector(selectCapturedFromMap);
+  const CCEGonnaBeCaptured = useSelector(selectIsCCEGoingToBeCaptured);
   // const [CCECaptured, setCCECaptured] = useState(false);
   const locationData = useSelector(selectLocation);
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-useEffect(() => {
-    if(CCEGonnaBeCaptured){
-      if(dataCollectionData.landCoverType == "Cropland"){
-        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured && CCECaptured && cropInformationCaptured)
+  useEffect(() => {
+    // if capturing the CCE
+    if (CCEGonnaBeCaptured) {
+      if (dataCollectionData.landCoverType == 'Cropland') {
+        // if it is a crop land
+        setIsSavable(
+          locationCaptured &&
+            bearingToCenterCaptured &&
+            distanceToCenterCaptured &&
+            landCoverTypeCaptured &&
+            CCECaptured &&
+            cropInformationCaptured,
+        );
+      } else {
+        setIsSavable(
+          locationCaptured &&
+            bearingToCenterCaptured &&
+            distanceToCenterCaptured &&
+            landCoverTypeCaptured &&
+            CCECaptured,
+        );
       }
-      else{
-        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured &&  CCECaptured);
+    } else {
+      // not capturing the CCE
+      if (dataCollectionData.landCoverType == 'Cropland') {
+        // if it is a crop land
+        setIsSavable(
+          locationCaptured &&
+            bearingToCenterCaptured &&
+            distanceToCenterCaptured &&
+            landCoverTypeCaptured &&
+            cropInformationCaptured,
+        );
+      } else {
+        setIsSavable(
+          locationCaptured &&
+            bearingToCenterCaptured &&
+            distanceToCenterCaptured &&
+            landCoverTypeCaptured,
+        );
       }
     }
-    else{
-      if(dataCollectionData.landCoverType == "Cropland"){
-        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured && cropInformationCaptured)
-      }
-      else{
-        setIsSavable(bearingToCenterCaptured && distanceToCenterCaptured && landCoverTypeCaptured);
-      }
 
+    if (CCECaptured && capturedFromMap) {
+      if (dataCollectionData.landCoverType == 'Cropland') {
+        // if it is a crop land
+        setIsSavable(
+          locationCaptured &&
+            landCoverTypeCaptured &&
+            CCECaptured &&
+            cropInformationCaptured,
+        );
+      } else {
+        setIsSavable(locationCaptured && landCoverTypeCaptured && CCECaptured);
+      }
     }
-}, [bearingToCenterCaptured, locationCaptured, distanceToCenterCaptured, landCoverTypeCaptured, cropInformationCaptured, CCECaptured, CCEGonnaBeCaptured, dataCollectionData])
+    if (CCECaptured == false && capturedFromMap) {
+      if (dataCollectionData.landCoverType == 'Cropland') {
+        // if it is a crop land
+        setIsSavable(
+          locationCaptured && landCoverTypeCaptured && cropInformationCaptured,
+        );
+      } else {
+        setIsSavable(locationCaptured && landCoverTypeCaptured);
+      }
+    }
+  }, [
+    bearingToCenterCaptured,
+    locationCaptured,
+    capturedFromMap,
+    distanceToCenterCaptured,
+    landCoverTypeCaptured,
+    cropInformationCaptured,
+    CCECaptured,
+    CCEGonnaBeCaptured,
+    dataCollectionData,
+  ]);
 
-useEffect(() => {
+  useEffect(() => {
     dispatch(setLocationData(locationData));
-}, [locationData])
-
+  }, [locationData]);
 
   useEffect(() => {
     setLocationCaptured(
       dataCollectionData.latitude != null &&
         dataCollectionData.accuracyCorrection != null,
     );
-    setDistanceToCenterCaptured(dataCollectionData.distanceToCenter != null)
+    setDistanceToCenterCaptured(dataCollectionData.distanceToCenter != null);
     setBearingToCenterCaptured(dataCollectionData.bearingToCenter != null);
     setLandCoverTypeCaptured(dataCollectionData.landCoverType != null);
-    
+
     if (dataCollectionData.landCoverType == 'Cropland') {
       let cropLandCondition =
         // dataCollectionData.cropInformation.isCaptured == true && // set this sometime
@@ -94,7 +156,7 @@ useEffect(() => {
         dataCollectionData.cropInformation.liveStock != null &&
         dataCollectionData.cropInformation.croppingPattern != null;
       setCropInformationCaptured(cropLandCondition);
-      console.log(cropLandCondition, "crop")
+      console.log(cropLandCondition, 'crop');
     }
 
     setPhotoCaptured(dataCollectionData.images?.length >= 2);
@@ -122,60 +184,63 @@ useEffect(() => {
         </Text>
         <CorrectWrongIcon isCorrect={photoCaptured} />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          paddingHorizontal: 25,
-          padding: 4,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'black',
-          }}>
-          Collect sufficient GPS points
-        </Text>
-        <CorrectWrongIcon isCorrect={locationCaptured} />
-      </View>
+      {capturedFromMap ==  false ? (
+        <>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              paddingHorizontal: 25,
+              padding: 4,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: 'black',
+              }}>
+              Collect sufficient GPS points
+            </Text>
+            <CorrectWrongIcon isCorrect={locationCaptured} />
+          </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          paddingHorizontal: 25,
-          padding: 4,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'black',
-          }}>
-          Captured bearing to center
-        </Text>
-        <CorrectWrongIcon isCorrect={bearingToCenterCaptured} />
-      </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              paddingHorizontal: 25,
+              padding: 4,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: 'black',
+              }}>
+              Captured bearing to center
+            </Text>
+            <CorrectWrongIcon isCorrect={bearingToCenterCaptured} />
+          </View>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          paddingHorizontal: 25,
-          padding: 4,
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
-        <Text
-          style={{
-            color: 'black',
-          }}>
-          Captured distance to center
-        </Text>
-        <CorrectWrongIcon isCorrect={distanceToCenterCaptured} />
-      </View>
-
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              paddingHorizontal: 25,
+              padding: 4,
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+            <Text
+              style={{
+                color: 'black',
+              }}>
+              Captured distance to center
+            </Text>
+            <CorrectWrongIcon isCorrect={distanceToCenterCaptured} />
+          </View>
+        </>
+      ) : null}
       <View
         style={{
           flexDirection: 'row',
@@ -237,31 +302,43 @@ useEffect(() => {
       <View
         style={{
           marginHorizontal: 25,
-          margin:5
+          margin: 5,
         }}>
-        <Button title="submit" onPress={() => {
-          if(isSavable){
-            saveToLocalStorageHandler()
-            dispatch(resetState());
-            rerender()
-            navigation.goBack();
-          }
-          else{
-            Alert.alert("Make sure you have filled the entries properly", "Make sure to fill all the important fields before saving")
-          }
-        }}></Button>
+        <Button
+          title="submit"
+          onPress={() => {
+            if (isSavable) {
+              saveToLocalStorageHandler();
+              dispatch(resetState());
+              scrollRef.current?.scrollTo({
+                y: 0,
+                animated: true,
+              });
+              navigation.goBack();
+            } else {
+              Alert.alert(
+                'Make sure you have filled the entries properly',
+                'Make sure to fill all the important fields before saving',
+              );
+            }
+          }}></Button>
       </View>
       <View
         style={{
           marginHorizontal: 25,
-          margin:5
+          margin: 5,
         }}>
-        <Button title="Cancel" onPress={() => {
-            dispatch(resetState())
-            rerender();
-            console.log(storage.getAllKeys())
-            navigation.goBack()
-        }}></Button>
+        <Button
+          title="Cancel"
+          onPress={() => {
+            dispatch(resetState());
+            console.log(storage.getAllKeys());
+            scrollRef.current?.scrollTo({
+              y: 0,
+              animated: true,
+            });
+            navigation.goBack();
+          }}></Button>
       </View>
     </>
   );

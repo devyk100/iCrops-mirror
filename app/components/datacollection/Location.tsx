@@ -17,19 +17,21 @@ import {
 import MapChooseLocation from '../MapChooseLocation';
 import Geolocation from '@react-native-community/geolocation';
 import {Position} from '../../types';
+import { selectCapturedFromMap, setCapturedFromMap } from '../../features/DataCollectionSlice';
 
 export default function () {
   const [isEnabled, setIsEnabled] = useState(false);
+  const capturedFromMap = useSelector(selectCapturedFromMap);
   const locationData = useSelector(selectLocation);
   const dispatch = useDispatch();
+  // const setCapturedFromMapBoolean = useCallback((bool: boolean) => {
+  //   dispatch(setCapturedFromMap(bool))
+  // }, [capturedFromMap]);
   const toggleSwitch = () => {
-    setIsEnabled(t => !t);
-    // setIsEnabled(previousState => {
-    //   if (!previousState == true) {
-    //     getLocation();
-    //   }
-    //   return !previousState;
-    // });
+    setIsEnabled(t => {
+      dispatch(setCapturedFromMap(!t));
+      return !t
+    });
   };
 
   const getCurrentPosition = useCallback(() => {
@@ -41,11 +43,7 @@ export default function () {
     });
     Geolocation.getCurrentPosition(
       (pos: Position) => {
-        // setPosition(JSON.stringify(pos));
         dispatch(setLocation(pos.coords));
-        // dispatch(setLatitude(pos.coords.latitude));
-        // dispatch(setLongitude(pos.coords.longitude));
-        // console.log(locationData);
         console.log(pos);
       },
       (error: any) =>
@@ -142,27 +140,6 @@ export default function () {
             }}
           />
         </Modal>
-        {/* <TouchableOpacity
-              style={{
-                backgroundColor: '#d4d4d4',
-                padding: 10,
-                marginTop: 0,
-              }}
-              // onPress={() => {
-              //   dispatch(clearLocation())
-              //   setIsEnabled(false);
-              // }}
-              onPress={() => {
-                locationSetter();
-              }}>
-              <Text
-                style={{
-                  color: 'black',
-                  textAlign: 'center',
-                }}>
-                Capture Location
-              </Text>
-            </TouchableOpacity> */}
         <Button
           title="Capture Location"
           onPress={() => locationSetter()}></Button>
@@ -185,24 +162,6 @@ export default function () {
           }}>
           Accuracy Correction: {locationData.accuracy}
         </Text>
-        {/* <TouchableOpacity
-              style={{
-                backgroundColor: '#d4d4d4',
-                padding: 10,
-                marginTop: 0,
-              }}
-              onPress={() => {
-                dispatch(clearLocation());
-                setIsEnabled(false);
-              }}>
-              <Text
-                style={{
-                  color: 'black',
-                  textAlign: 'center',
-                }}>
-                CLEAR
-              </Text>
-            </TouchableOpacity> */}
         <Button
           title="Clear"
           onPress={() => {

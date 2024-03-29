@@ -67,6 +67,63 @@ export default function ({
               width: '65%',
               margin: 10,
             }}>
+              {newCropToBeAdded ? (
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <TextInput
+                    style={{
+                      padding: 5,
+                      margin: 5,
+                      fontSize: 18,
+                      borderBottomWidth: 1,
+                      borderBottomColor: 'green',
+                      flex: 3,
+                    }}
+                    value={newCropValue}
+                    onChangeText={setNewCropValue}></TextInput>
+                  <Button
+                    title="done"
+                    color={'grey'}
+                    onPress={() => {
+                      action(newCropValue);
+                      setModalVisible(t => !t);
+                    }}></Button>
+                </View>
+              ) : null}
+  
+              {!newCropToBeAdded ? (
+                <TouchableOpacity
+                  onPress={e => {
+                    setNewCropToBeAdded(true);
+                  }}
+                  style={{
+                    // padding: 5,
+                    // margin: 5,
+                    // borderBottomWidth: 1,
+                    // borderBottomColor: 'grey',
+                    backgroundColor: "lightgreen",
+                    alignItems:"center",
+                    borderRadius: 25,
+                    padding: 10,
+                    flexDirection: "row"
+                  }}>
+                  <Text
+                    // @ts-ignore
+                    style={{color: 'black',flex:6, textAlign:"center", fontSize: 18}}>
+                    Add crop
+                  </Text>
+                  <Text 
+                  //@ts-ignore
+                  style={{
+                    fontSize:20,
+                    fontWeight:1000
+                  }}>+</Text>
+                </TouchableOpacity>
+              ) : null}
             {data.map((value: any) => {
               return (
                 <TouchableOpacity
@@ -94,52 +151,6 @@ export default function ({
                 </TouchableOpacity>
               );
             })}
-            {newCropToBeAdded ? (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <TextInput
-                  style={{
-                    padding: 5,
-                    margin: 5,
-                    fontSize: 18,
-                    borderBottomWidth: 1,
-                    borderBottomColor: 'green',
-                    flex: 3,
-                  }}
-                  value={newCropValue}
-                  onChangeText={setNewCropValue}></TextInput>
-                <Button
-                  title="done"
-                  color={'grey'}
-                  onPress={() => {
-                    action(newCropValue);
-                    setModalVisible(t => !t);
-                  }}></Button>
-              </View>
-            ) : null}
-
-            {!newCropToBeAdded ? (
-              <TouchableOpacity
-                onPress={e => {
-                  setNewCropToBeAdded(true);
-                }}
-                style={{
-                  padding: 5,
-                  margin: 5,
-                  borderBottomWidth: 1,
-                  borderBottomColor: 'grey',
-                }}>
-                <Text
-                  // @ts-ignore
-                  style={{color: 'black', fontSize: 18, fontWeight: 600}}>
-                  Add another crop
-                </Text>
-              </TouchableOpacity>
-            ) : null}
           </ScrollView>
         </View>
       </Modal>

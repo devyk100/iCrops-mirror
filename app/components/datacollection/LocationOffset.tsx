@@ -1,12 +1,12 @@
 import { Slider } from "@miblanchard/react-native-slider";
 import { useCallback, useEffect, useState } from "react";
-import { Button, Text, TouchableOpacity, View } from "react-native";
+import { Button, Text, ToastAndroid, TouchableOpacity, View } from "react-native";
 // @ts-ignore
 import CompassHeading from 'react-native-compass-heading';
 import { useDispatch, useSelector } from "react-redux";
 import { selectDegreesToNorth, setDegreesToNorth } from "../../features/LocationSlice";
 import { hell, storage } from "../../localStorage";
-import { setBearingToCenterData, setDistanceToCenterData } from "../../features/DataCollectionSlice";
+import { selectCapturedFromMap, setBearingToCenterData, setDistanceToCenterData } from "../../features/DataCollectionSlice";
 export default function(){
 
   const [distanceToCenter, setDistanceToCenter] = useState(70);
@@ -14,33 +14,46 @@ export default function(){
   const [bearingToCenter, setBearingToCenter] = useState<number | null>(null);
   // const [degreesToNorth, setDegreesToNorth] = useState(0);
   const degreesToNorth = useSelector(selectDegreesToNorth)
+  const capturedFromMap = useSelector(selectCapturedFromMap);
+  const showToastWithGravityAndOffset = () => {
+    ToastAndroid.showWithGravityAndOffset(
+      'Hold the phone steady for better accuracy',
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
   const findBearingToCenter = useCallback(() => {
-    setBearingToCenter(() => {
+    showToastWithGravityAndOffset()
+    setTimeout(() => {
+      setBearingToCenter(degreesToNorth)
       dispatch(setBearingToCenterData(degreesToNorth))
-      return degreesToNorth
-    });
+    }, 1750)
   }, [degreesToNorth])
   const dispatch = useDispatch();
   useEffect(() => {
-    const degree_update_rate = 30;
+    const degree_update_rate = 3;
     let timerId = setTimeout(() => console.log("testing"), 10);
     CompassHeading.start(degree_update_rate, ({heading, accuracy}: {
       heading: number;
       accuracy: number;
     }) => {
-      console.log('CompassHeading: ', heading, accuracy);
+      // console.log('CompassHeading: ', heading, accuracy);
       // setDegreesToNorth(heading);
-      clearTimeout(timerId)
-      timerId = setTimeout(() => dispatch(setDegreesToNorth(heading)), 0);
+      // clearTimeout(timerId)
+      // timerId = setTimeout(() => dispatch(setDegreesToNorth(heading)), 0);
+      dispatch(setDegreesToNorth(heading))
     });
-
+    
+    
     return () => {
       CompassHeading.stop();
     };
   }, []);
-
-    return (
-        <>
+  if(capturedFromMap) return null;
+  return (
+    <>
         <View
             style={{
               marginTop: 15,

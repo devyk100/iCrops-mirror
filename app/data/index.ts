@@ -230,26 +230,26 @@ export const seasonData = [
     },
     {
         value: 2,
-        title: "Kharif Season"
+        title: "Kharif"
     },
     {
         value: 3,
-        title: "Rabi Season"
+        title: "Rabi"
     },
     {
         value: 4,
-        title: "Summer/Dry/Zaid Season"
+        title: "Summer/Dry/Zaid"
     },
     {
         value: 5,
-        title: "Meher Season"
+        title: "Meher"
     },
     {
         value: 6,
-        title: "Belg Season"
+        title: "Belg"
     },
     {
         value: 7,
-        title: "Aus Season"
+        title: "Aus"
     },
 ]
