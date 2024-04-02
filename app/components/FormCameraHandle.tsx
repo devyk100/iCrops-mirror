@@ -38,6 +38,7 @@ import {
   setLocation,
 } from '../features/LocationSlice';
 import { calculateExactLocation } from '../location/getLocation';
+import { upload } from '../networking';
 
 async function hasAndroidPermission() {
   const getCheckPermissionPromise = () => {
@@ -195,6 +196,7 @@ const imageProcessing = async (
     album: 'geotagged photos',
   });
   completedTask(newUri.node.image.uri);
+  // upload(newUri.node.image.uri)
 };
 export default function () {
   const imageList = useSelector(selectImagesList);

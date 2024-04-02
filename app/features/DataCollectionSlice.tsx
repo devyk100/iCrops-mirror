@@ -30,10 +30,10 @@ const initialState = {
   },
   CCE: {
     isCaptured: false,
-    isGoingToBeCaptured:false,
+    isGoingToBeCaptured:false, // omit this in the server request
     sampleSize: {
-      x: null,
-      y: null
+      x: null, // change this to sampleSize1
+      y: null // change this to sampleSize2
     },
     grainWeight: null,
     biomassWeight: null,
@@ -41,7 +41,7 @@ const initialState = {
     sowDate: null,
     harvestDate: null,
   },
-  images: [null], //null for typescript to infer a string type
+  images: [null], //null for typescript to infer a string type, so remove that null
   locationDesc: null,
 }
 export const counterSlice = createSlice({

@@ -4,7 +4,9 @@ export const storage = new MMKV();
 
 export function saveToLocalStorage(params: any) {
 
-
+  if(!storage.contains('bottomIndex')){
+    storage.set('bottomIndex', 1);
+  }
   //counting the whole count of the data synced, it is updated to the latest
   if (!storage.contains('counter')) {
     storage.set('counter', 1);
@@ -65,4 +67,42 @@ export function hell() {
   // // @ts-ignore
   // const userObject = JSON.parse(jsonUser)
   // console.log(userObject)
+}
+
+
+export function retrieveAllData(){
+    let a = storage.getNumber('bottomIndex')
+    let totalCount = storage.getNumber('counter')
+    const dataObject: Object[] = [];
+    if(a && totalCount){
+      for(; a <= totalCount; a++){
+          let dataString = storage.getString(`data.entry-${a}`);
+          if(dataString){
+            let data = JSON.parse(dataString);
+            let newData = {
+              ...data,
+              
+            }
+            newData.CCE.sampleSize1 = data.CCE.sampleSize.x;
+            newData.CCE.sampleSize2 = data.CCE.sampleSize.y;
+            newData.CCE.sampleSize = null;
+            let newImageList = data.images.filter((value:any) => (value != null))
+            newData.images = newImageList;
+            dataObject.push(newData);
+          }
+      }
+    }
+    return dataObject;
+}
+
+
+export function setBottomIndex(bottomIndex: number){
+  // while a data entry is synced successfully, we need not change the counter, the counter is for the top one, and hence just the bottom needs to be changed.
+  storage.delete(`data.entry-${bottomIndex-1}`)
+  storage.set('bottomIndex', bottomIndex);
+  // storage.set('count', count);
+  return true;
+}
+export function getBottomIndexCount(){
+  return storage.getNumber('bottomIndex');
 }
