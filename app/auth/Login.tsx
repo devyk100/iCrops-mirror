@@ -18,6 +18,13 @@ export default function () {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const submit = useCallback(async () => {
+    if (email == '' || password == '') {
+      Alert.alert(
+        'Please enter the credentials',
+        'Do not leave the fields empty and enter valid email ID and password',
+      );
+      return;
+    }
     const response = await axios.post(BACKEND_URL + 'api/v1/user/login', {
       email,
       password,
@@ -25,7 +32,10 @@ export default function () {
     if (response.data.success)
       setJwtEmail(response.data.jwt, response.data.email);
     else {
-      Alert.alert('Login failed, check the password and email id');
+      Alert.alert(
+        'Login failed, check the password and email id',
+        'The entered email ID, or password combination is not correct',
+      );
     }
   }, [email, password]);
   return (
@@ -86,6 +96,7 @@ export default function () {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            marginTop: 6,
           }}>
           <Text
             style={{
@@ -122,7 +133,7 @@ export default function () {
             style={{
               width: '80%',
             }}>
-            <Button onPress={() => submit()} title="Submit"></Button>
+            <Button onPress={() => submit()} title="login"></Button>
           </View>
         </View>
       </ScrollView>
