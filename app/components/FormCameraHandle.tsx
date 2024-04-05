@@ -185,7 +185,7 @@ const imageProcessing = async (
     scale: 1,
     quality: 100,
     filename: `${username}-${landType}-${new Date()}`,
-    saveFormat: ImageFormat.png,
+    saveFormat: ImageFormat.jpg,
   };
   const permimssionPass = await hasAndroidPermission();
   console.log(permimssionPass);

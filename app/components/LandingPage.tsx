@@ -70,23 +70,6 @@ export default function HomeScreen({ navigation }: {
                     title: "Not Synced"
                 }
             ]}></SmallDrawer>
-
-              <Text style={{
-                paddingHorizontal :25
-              }}>
-
-              Will be removed later, just for testing purposes:
-              </Text>
-              {data.map((value:any) => {
-                return <ScrollView>
-                  <Text style={{
-                    margin:10,
-                    padding:10,
-                    color:"blue"
-                  }}>{JSON.stringify(value)}</Text>
-                </ScrollView>
-              })}
-            {/* </Text> */}
       </ScrollView>
     );
   }
