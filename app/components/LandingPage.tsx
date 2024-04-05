@@ -6,14 +6,15 @@ import { useSelector } from "react-redux";
 import { selectWaterSourceType } from "../features/DataCollectionSlice";
 import { useEffect, useState } from "react";
 import { getBottomIndexCount, storage } from "../localStorage";
-import { useMMKVListener } from "react-native-mmkv";
+import { useMMKVListener, useMMKVString } from "react-native-mmkv";
 import { upload } from "../networking";
 // import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function HomeScreen({ navigation }: {
     navigation: any
   }) {
-
+    const [email, setEmail] = useMMKVString("user.email")
+    const [jwt, setJwt] = useMMKVString("user.jwt")
     // at any saving of the  data, and not the initial one.
     useMMKVListener((key) => {
       const keys = storage.getAllKeys()

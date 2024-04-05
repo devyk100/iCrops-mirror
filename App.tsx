@@ -14,6 +14,9 @@ import store from './app/store';
 import {selectDegreesToNorth, selectLocation} from './app/features/LocationSlice';
 // @ts-ignore
 import compassImage from './app/assets/compass.png';
+import Login from './app/auth/Login';
+import MainAuth from './app/auth/MainAuth';
+import { useMMKVString } from 'react-native-mmkv';
 
 function NotificationsScreen({navigation}: {navigation: any}) {
   return (
@@ -80,10 +83,12 @@ function DataCollectionHeader() {
 const Drawer = createDrawerNavigator();
 
 function CustomDrawerContent(props: any) {
+  const [email, setEmail] = useMMKVString('user.email');
+  const [jwt, setJwt] = useMMKVString('user.jwt');
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItem
-        label={'Hi example@gmail.com'}
+        label={'Hi '+email}
         onPress={() => console.log('does something')}
         // @ts-ignore
         labelStyle={{
@@ -92,12 +97,21 @@ function CustomDrawerContent(props: any) {
         }}
       />
       <DrawerItemList {...props} />
+      <DrawerItem label={"Logout"}  onPress={() => {
+           setEmail(undefined)
+           setJwt(undefined)
+      }} labelStyle={{}}/>
     </DrawerContentScrollView>
   );
 }
 
 export default function App() {
-  return (
+  const [email, setEmail] = useMMKVString("user.email")
+    const [jwt, setJwt] = useMMKVString("user.jwt")
+    if(jwt == undefined)  return (
+      <MainAuth />
+    )
+    else return (
     <Provider store={store}>
       <NavigationContainer>
         <Drawer.Navigator
@@ -130,5 +144,6 @@ export default function App() {
       {/* <ImageMarker></ImageMarker> */}
       {/* <MapChooseLocation></MapChooseLocation> */}
     </Provider>
+    
   );
 }

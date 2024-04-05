@@ -106,3 +106,12 @@ export function setBottomIndex(bottomIndex: number){
 export function getBottomIndexCount(){
   return storage.getNumber('bottomIndex');
 }
+
+export function setJwtEmail(jwt: string, email: string){
+  storage.set('user.email', email)
+  storage.set('user.jwt', jwt)
+}
+
+export function getJwt() {
+  return storage.getString("user.jwt");
+}
